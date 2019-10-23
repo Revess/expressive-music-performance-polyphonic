@@ -4,6 +4,10 @@ import math
 import py_midicsv
 import pandas as pd
 import csv
+import wavio
+import random
+from scipy import signal
+import matplotlib.pyplot as plt
 
 MIDI_PATH = os.path.join("Data","Midi")
 CSV_PATH = os.path.join("Data", "Csv")
@@ -30,6 +34,8 @@ NOTE_NUM = {"C"    :0,
 
 CIRCLE_OF_5THS = ["C","G","D","A","E","B","F#","C#","Db","Gb","Db" ,"Ab","Eb","Bb","F"]
 
+#-------
+#conversion methods, written bij Sergio Ivan (see WhyStudy.ipynb \referencecode)
 def convert_midi_to_csv(midi_path=MIDI_PATH, csv_path=CSV_PATH, folder="Score",write_midi_cvs_to_file=False):
     # convert_midi_to_csv: Retrieves MIDI files at a folder and creates the corresponding csv converted files.
     # It uses py_midicsv, to obtain a csv type MIDI event file. Then it uses the midi_to_nmat to obtain a note 
@@ -174,19 +180,31 @@ def midi_to_nmat(midi_csv_list):
 
     nmat.insert(0,header)
     return nmat
+#-------
+
+#TODO: fix audio to spectogram conversion, files are 24 bit (difficult for pyhton). Current file is not being converted corectly for the wave to read
+def audio_to_spectroCSV(audio_path,csv_path):
+    wave = wavio.read(audio_path)
+    wave.data = np.sin(wave.data.astype(float))
+
+    frequencies, times, spectrogram = signal.spectrogram(wave.data[:,0],wave.rate)
+    print(times)
+    #spectroData = np.concatenate((frequencies, times))
+    #spectroData = np.reshape(spectroData, (-1,2))
+    plt.pcolormesh(times, frequencies, spectrogram)
+    plt.ylabel('Frequency [Hz]')
+    plt.xlabel('Time [sec]')
+    plt.show()
+
+    #np.savetxt(tempFile,spectroData,delimiter=',',fmt='%1.47f')
+
 
 def main():
-    #convert_midi_to_csv(write_midi_cvs_to_file=True)
-    audioData = pd.read_csv(r'Data\Csv\Audio.csv', header=None)
-    mididata = pd.read_csv(r'Data\Csv\Score\Miniature1_MIDI.csv', header=None, skiprows=12,usecols=[4,5])
-    mididata = mididata.loc[~(mididata==0).any(axis=1)]
-    mididata = mididata.dropna()
-    mididata = mididata.drop([5], axis=1)
-    mididata = mididata.reset_index(drop=True)
-    print("This is the mididata")
-    print(mididata)
-    print("This is the audiodata")
-    print(audioData)
+    #convert_midi_to_csv()
+    audio_to_spectroCSV(os.path.join('..','Analysis','Audios (Conditions A-B-C)','S01-AT.wav'),os.path.join('Data','Csv','Audio.csv'))
+    mididata = pd.read_csv(r'Data\Csv\Score\Miniature1.csv', header=None) #readmidiFile
+    #print("This is the mididata")
+    #print(mididata)
     return 0
 
 main()
