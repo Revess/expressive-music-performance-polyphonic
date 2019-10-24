@@ -4,10 +4,10 @@ import math
 import py_midicsv
 import pandas as pd
 import csv
-import wavio
 import random
 from scipy import signal
 import matplotlib.pyplot as plt
+import soundfile as sf
 
 MIDI_PATH = os.path.join("Data","Midi")
 CSV_PATH = os.path.join("Data", "Csv")
@@ -182,22 +182,22 @@ def midi_to_nmat(midi_csv_list):
     return nmat
 #-------
 
-#TODO: fix audio to spectogram conversion, files are 24 bit (difficult for pyhton). Current file is not being converted corectly for the wave to read
 def audio_to_spectroCSV(audio_path,csv_path):
-    wave = wavio.read(audio_path)
-    wave.data = np.sin(wave.data.astype(float))
+    data, sr = sf.read(audio_path)
+    n_samples = len(data)
+    total_duration = n_samples / sr
+    sample_times = np.linspace(0, total_duration, n_samples)
 
-    frequencies, times, spectrogram = signal.spectrogram(wave.data[:,0],wave.rate)
-    print(times)
-    #spectroData = np.concatenate((frequencies, times))
-    #spectroData = np.reshape(spectroData, (-1,2))
-    plt.pcolormesh(times, frequencies, spectrogram)
-    plt.ylabel('Frequency [Hz]')
-    plt.xlabel('Time [sec]')
-    plt.show()
 
-    #np.savetxt(tempFile,spectroData,delimiter=',',fmt='%1.47f')
-
+    
+    #f, t, Spec = signal.spectrogram(data,sr,window=('tukey',0.5),nperseg=256,noverlap=0.25,mode='complex')
+    #np.savetxt("freq.txt",f,delimiter=',',fmt='%1.5f')
+    #np.savetxt("tim.txt",t,delimiter=',',fmt='%1.5f')
+    #np.savetxt("Spec.txt",Spec,delimiter=',',fmt='%1.5f')
+    # plt.pcolormesh(t, f[0:100], Spec[0:100,])
+    # plt.ylabel('Frequency [Hz]')
+    # plt.xlabel('Time [sec]')
+    # plt.show()
 
 def main():
     #convert_midi_to_csv()
