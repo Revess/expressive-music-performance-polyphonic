@@ -182,26 +182,37 @@ def midi_to_nmat(midi_csv_list):
     return nmat
 #-------
 
-def audio_to_spectroCSV(audio_path,csv_path):
+def audio_to_spectroCSV(audio_path,csv_path,window_length,overlap):
     data, sr = sf.read(audio_path)
     n_samples = len(data)
     total_duration = n_samples / sr
-    sample_times = np.linspace(0, total_duration, n_samples)
+    window = signal.get_window(window=('tukey',0.25),Nx=window_length)
+    noverlap = len(window)/overlap
 
-
+    #spectrotransform
+    frequency, times, spectrum = signal.spectrogram(x=data,fs=sr,window=window,noverlap=noverlap)
     
-    #f, t, Spec = signal.spectrogram(data,sr,window=('tukey',0.5),nperseg=256,noverlap=0.25,mode='complex')
-    #np.savetxt("freq.txt",f,delimiter=',',fmt='%1.5f')
-    #np.savetxt("tim.txt",t,delimiter=',',fmt='%1.5f')
-    #np.savetxt("Spec.txt",Spec,delimiter=',',fmt='%1.5f')
-    # plt.pcolormesh(t, f[0:100], Spec[0:100,])
+    header = ["times","frequency","intensity"]
+    frequency_response = [[0,1,2],[1,2,3]]
+    frequency_response.insert(0,header)
+
+    with open("spectrum.csv", "w") as spectrum_csv:
+        wr = csv.writer(spectrum_csv, quoting=csv.QUOTE_NONE)
+        wr.writerows(frequency_response)
+        spectrum_csv.close()
+
+    # np.savetxt("freq.txt",frequency,delimiter=',',fmt='%1.10f')
+    # np.savetxt("tim.txt",times,delimiter=',',fmt='%1.20f')
+    # np.savetxt("Spec.csv",spectrum,delimiter=',',fmt='%1.47f')
+
+    # plt.pcolormesh(times, frequency[0:1000],10*np.log10(spectrum[0:1000]))
     # plt.ylabel('Frequency [Hz]')
     # plt.xlabel('Time [sec]')
-    # plt.show()
+    #plt.show()
 
 def main():
     #convert_midi_to_csv()
-    audio_to_spectroCSV(os.path.join('..','Analysis','Audios (Conditions A-B-C)','S01-AT.wav'),os.path.join('Data','Csv','Audio.csv'))
+    audio_to_spectroCSV(os.path.join('..','Analysis','Audios (Conditions A-B-C)','S01-AT.wav'),os.path.join('Data','Csv','Audio.csv'),128,2)
     mididata = pd.read_csv(r'Data\Csv\Score\Miniature1.csv', header=None) #readmidiFile
     #print("This is the mididata")
     #print(mididata)
