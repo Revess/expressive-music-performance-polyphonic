@@ -1,5 +1,6 @@
 #Python module that generates a csv file with the frequency response of an audio file.
 import numpy as np
+import pandas as pd
 import os
 import csv
 from scipy import signal
