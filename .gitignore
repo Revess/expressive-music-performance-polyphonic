@@ -1,0 +1,7 @@
+*.csv
+\midicsv-1.1
+\old
+\papar
+\software
+\__pycache__
+kari.py
