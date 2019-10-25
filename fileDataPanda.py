@@ -11,16 +11,25 @@ CSV_OUTPUT_PATH=os.path.join('Data','Csv','Audio.csv')
 MIDI_PATH=os.path.join('Data','Csv','Score','Miniature1.csv')
 SPEC_PATH = os.path.join('Output','spectrum.csv')
 
-#def detect_onsets(specdata,mididata):
-
+def detect_onsets(specdata,mididata):
+    list_of_frequencies = list(specdata.columns.values)
+    list_of_frequencies.pop(0)
+    min_pitch = math.pow(2,(mididata[3].min()-69)/12)*440
+    max_pitch = math.pow(2,(mididata[3].max()-69)/12)*440
+    for cols in specdata:
+        if(cols != "time in samples"):
+            if(float(cols) <= min_pitch or float(cols) >= max_pitch):
+                specdata = specdata.drop(columns=cols)
+            
+    print(specdata)
+    return 0
 
 def main():
     #cmc.convert_midi_to_csv()
-    #asc.audio_to_spectroCSV(AUDIO_PATH,CSV_OUTPUT_PATH,128,2)
-    mididata = pd.read_csv(MIDI_PATH, header=None) #readmidiFile
+    #asc.audio_to_spectroCSV(AUDIO_PATH,CSV_OUTPUT_PATH,256,2)
+    mididata = pd.read_csv(MIDI_PATH,skiprows=1, header=None) #readmidiFile
     spectraldata = pd.read_csv(SPEC_PATH)
-    #compared_midi = detect_onsets(spectraldata,mididata)
-    #print(mididata)
+    compared_midi = detect_onsets(spectraldata,mididata)
     
     return 0
 

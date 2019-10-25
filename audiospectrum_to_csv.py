@@ -15,13 +15,18 @@ def audio_to_spectroCSV(audio_path,csv_path,window_length,overlap):
     frequency, times, spectrum = signal.spectrogram(x=data,fs=sr,window=window,noverlap=noverlap)
     #Put all the spectral information in one big array, but 90 degrees flipped to put the frequencies on top and timings on the left, 
     #for easier time tracking
+    #Create header in string
+    header = "time in samples"
+    for data in frequency:
+        header += "," + str(data)
+    header += "\n"
     spectrum = np.rot90(spectrum)
-    spectrum = np.insert(spectrum,0,frequency,0)
-    times = np.insert(times,0,np.array(0))
     spectrum = np.insert(spectrum,0,times,1)
 
     #Write to csv file
     with open(os.path.join('Output','spectrum.csv'), "w", newline='') as spectrum_csv:
+        spectrum_csv.write(header)
         wr = csv.writer(spectrum_csv, quoting=csv.QUOTE_NONE)
         wr.writerows(spectrum)
         spectrum_csv.close()
+    print("finished writing spectral csv file")
