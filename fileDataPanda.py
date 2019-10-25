@@ -18,15 +18,23 @@ def detect_onsets(specdata,mididata):
     max_pitch = math.pow(2,(mididata[3].max()-69)/12)*440
     for cols in specdata:
         if(cols != "time in samples"):
-            if(float(cols) <= min_pitch or float(cols) >= max_pitch):
+            if((float(cols) <= min_pitch or float(cols) >= max_pitch) and float(cols) != 0):
                 specdata = specdata.drop(columns=cols)
-            
-    print(specdata)
-    return 0
+
+    for cols in specdata:
+        if(cols != "time in samples"):
+            specdata['is larger than'] = np.where(specdata[cols] > 0.000000001, True, False)
+
+    print(np.where(specdata['is larger than'] == True))
+    return 0 #temporary measure
+
+#TODO: fix data search method on how to find polyphonic data
+
+
 
 def main():
     #cmc.convert_midi_to_csv()
-    #asc.audio_to_spectroCSV(AUDIO_PATH,CSV_OUTPUT_PATH,256,2)
+    #asc.audio_to_spectroCSV(AUDIO_PATH,CSV_OUTPUT_PATH,256,0.75)
     mididata = pd.read_csv(MIDI_PATH,skiprows=1, header=None) #readmidiFile
     spectraldata = pd.read_csv(SPEC_PATH)
     compared_midi = detect_onsets(spectraldata,mididata)

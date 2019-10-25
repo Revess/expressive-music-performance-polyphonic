@@ -8,8 +8,16 @@ import soundfile as sf
 
 def audio_to_spectroCSV(audio_path,csv_path,window_length,overlap):
     data, sr = sf.read(audio_path)                                      #Read audio file, works with any bitdepth
+    i = 0
+    for sample in data:
+        if(sample < 0.005):
+            data = np.delete(data,0,0)
+        elif(sample > 0.005):
+            print(i)
+            break
+        i+=1
     window = signal.get_window(window=('tukey',0.25),Nx=window_length)
-    noverlap = len(window)/overlap
+    noverlap = len(window)*overlap
 
     #spectrotransform
     frequency, times, spectrum = signal.spectrogram(x=data,fs=sr,window=window,noverlap=noverlap)
