@@ -11,7 +11,5 @@ MIDI_PATH = os.path.join('Data','Midi')
 MIDI_CSV=os.path.join('Data','Csv')
 SPEC_PATH = os.path.join('Data','Csv','spectrum.csv')
 
-cmc.convert_midi_to_csv(MIDI_PATH,MIDI_CSV)
-asc.audio_to_spectroCSV(AUDIO_PATH,SPEC_PATH,256,0.75,False)
-# mididata = pd.read_csv(MIDI_PATH,skiprows=1, header=None) #readmidiFile
-# spectraldata = pd.read_csv(SPEC_PATH)
+#cmc.convert_midi_to_csv(MIDI_PATH,MIDI_CSV)
+asc.audio_to_spectroCSV(AUDIO_PATH,SPEC_PATH,2048,512,False)
