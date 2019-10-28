@@ -1,29 +1,22 @@
-import csv
 import pandas as pd
-import numpy as np
 from sklearn.neural_network import MLPClassifier
-from sklearn.metrics import accuracy_score
-
-def to_train_test(dataframe, percent = 0.3): #dataの30%をtest_dataに、70%をtrain_dataに変化している
-    #percentに入れた小数点以下の数字分、test_dataを入れる。
-    data_len = int(len(dataframe)*percent)
-    #学習用データと測定用データ
-    train_data = dataframe[:-data_len].dropna()
-    test_data = dataframe[-data_len:].dropna()
-    return train_data,test_data
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report,accuracy_score
 
 
 col = ["sp"+str(n) for n in range(256)]
 col.append("Pitch_YIN")
-X = pd.read_csv("input1.csv", names = col)
-Y = pd.read_csv("input2.csv", names = ["Pitch_manual"])
 
-X_train, X_test = to_train_test(X)
-Y_train, Y_test = to_train_test(Y)
+data = pd.read_csv("input1.csv", names = col)
+# target = pd.read_csv("input2.csv", names = ["Pitch_manual"])
+target = pd.read_csv("manual_mid_edit.csv", names = ["Pitch_manual","power"])
+target = target.drop(["power"], axis=1)
+target = target[:len(data)]
 
-model = MLPClassifier(activation="tanh", hidden_layer_sizes=200, batch_size=1000, learning_rate="adaptive",)
 
-model.fit(X_train,Y_train)
+data_train, data_test, target_train, target_test = train_test_split(data, target, test_size=0.2, random_state=0)
+model = MLPClassifier(activation="tanh", hidden_layer_sizes=(200,128), batch_size=1000, learning_rate="adaptive",)
+model.fit(data_train,target_train)
 
-pre = model.predict(X_test)
-print(accuracy_score(Y_test, pre, normalize=True, sample_weight=None))
+pre = model.predict(data_test)
+print(classification_report(target_test, pre))
