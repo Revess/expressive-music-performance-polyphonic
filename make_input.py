@@ -12,8 +12,7 @@ with open("input1.csv","w") as fw:
     for n in range(len(reader2)):
         reader1[n].append(reader2[n][1])
         writer.writerow(reader1[n])
-
-# midi_v = [[r] for r in reader3]
+        
 
 midi_v = []
 for r in reader3:
@@ -21,9 +20,8 @@ for r in reader3:
     m_v[int(r[0])] = 1
     midi_v.append(m_v)
 
-
-
 with open("input2.csv","w") as fw:
     writer = csv.writer(fw,lineterminator="\n")
-    for n in midi_v:
+    for n in midi_v[:len(reader2)]:
         writer.writerow(n) 
+    
