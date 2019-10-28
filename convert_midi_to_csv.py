@@ -5,11 +5,7 @@ import py_midicsv
 import pandas as pd
 import csv
 import random
-import audiospectrum_to_csv
 
-MIDI_PATH = os.path.join("Data","Midi")
-CSV_PATH = os.path.join("Data", "Csv")
-DATA_PATH = os.path.join("Data")
 SEMITONES_IN_OCTAVE = 12
 QUARTER_NOTE = 4
 NOTE_NUM = {"C"    :0,
@@ -32,18 +28,18 @@ NOTE_NUM = {"C"    :0,
 
 CIRCLE_OF_5THS = ["C","G","D","A","E","B","F#","C#","Db","Gb","Db" ,"Ab","Eb","Bb","F"]
 
-def convert_midi_to_csv(midi_path=MIDI_PATH, csv_path=CSV_PATH, folder="Score",write_midi_cvs_to_file=False):
+def convert_midi_to_csv(midi_path, csv_path, write_midi_cvs_to_file=False):
     # convert_midi_to_csv: Retrieves MIDI files at a folder and creates the corresponding csv converted files.
     # It uses py_midicsv, to obtain a csv type MIDI event file. Then it uses the midi_to_nmat to obtain a note 
     # matrix representation of the notes. The note matrix representation is saved as a csv file. 
 
-    files_list = os.listdir(os.path.join(midi_path,folder))
+    files_list = os.listdir(os.path.join(midi_path))
     
     for file_name in files_list:
         if file_name[-3:] == 'mid':
             print("Converting:" + file_name + "...", end="")
-            midi_file_path = os.path.join(midi_path, folder, file_name)
-            csv_file_path = os.path.join(csv_path, folder, file_name[:-3]+"csv")
+            midi_file_path = os.path.join(midi_path, file_name)
+            csv_file_path = os.path.join(csv_path, file_name[:-3]+"csv")
             midi_csv_list = py_midicsv.midi_to_csv(midi_file_path)
             nmat = midi_to_nmat(midi_csv_list)# midi_csv to nmat_csv
 
