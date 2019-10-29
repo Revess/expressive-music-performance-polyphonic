@@ -12,4 +12,4 @@ MIDI_CSV=os.path.join('Data','Csv')
 SPEC_PATH = os.path.join('Data','Csv','spectrum.csv')
 
 #cmc.convert_midi_to_csv(MIDI_PATH,MIDI_CSV)
-asc.audio_to_spectroCSV(AUDIO_PATH,SPEC_PATH,2048,512,False)
+asc.audio_to_spectroCSV(AUDIO_PATH,SPEC_PATH,16384,0.01,remove_silence=False,Show_Graph=False,Write_File=False)
