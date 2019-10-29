@@ -204,7 +204,7 @@ def compute_yin(sig, sr, dataFileName=None, w_len=512, w_step=256, f0_min=100, f
     return pitches, harmonic_rates, argmins, times
 
 
-def main(audioFileName="../audio/Cello_Suite_1007_mono.wav", w_len=1024, w_step=256, f0_min=70, f0_max=200, harmo_thresh=0.85, audioDir="./", dataFileName=None, verbose=4):
+def main(audioFileName="../audio/Cello_Suite_1007_mono.wav", w_len=1024, w_step=128, f0_min=70, f0_max=200, harmo_thresh=0.85, audioDir="./", dataFileName=None, verbose=4):
     """
     Run the computation of the Yin algorithm on a example file.
 
@@ -236,7 +236,7 @@ def main(audioFileName="../audio/Cello_Suite_1007_mono.wav", w_len=1024, w_step=
         audioFilePath = audioFileName
 
     sr, sig = audio_read(audioFilePath, formatsox=False)
-    print(sr)
+
 
     start = time.time()
     pitches, harmonic_rates, argmins, times = compute_yin(sig, sr, dataFileName, w_len, w_step, f0_min, f0_max, harmo_thresh)
@@ -248,7 +248,7 @@ def main(audioFileName="../audio/Cello_Suite_1007_mono.wav", w_len=1024, w_step=
 #--------------------------------------------------------------------
     import csv
     MED_output = medfilt(argmins,29)
-    with open("../YIN_result.csv","w",encoding = "UTF-8") as f1:
+    with open("../doc/YIN_result_2.csv","w",encoding = "UTF-8") as f1:
         writer = csv.writer(f1, lineterminator='\n')
         for i in range(len(times)):
             writer.writerow([times[i],MED_output[i]])

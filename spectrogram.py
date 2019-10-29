@@ -74,7 +74,7 @@ x = np.arange(0, len(data)) / samplerate    #波形生成のための時間軸�
 
 # Fsとoverlapでスペクトログラムの分解能を調整する。
 Fs = 256                                   # フレームサイズ
-overlap = 0                                # オーバーラップ率
+overlap = 50                                # オーバーラップ率
 
 # オーバーラップ抽出された時間波形配列
 time_array, N_ave, final_time = ov(data, samplerate, Fs, overlap)
@@ -90,7 +90,7 @@ print(len(fft_array))
 
 import csv
 
-with open("spec.csv","w") as f:
+with open("doc/spec_2.csv","w") as f:
     writer = csv.writer(f,lineterminator="\n")
     for fft in fft_array:
         writer.writerow(fft)
