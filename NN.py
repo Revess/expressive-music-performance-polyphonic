@@ -16,6 +16,8 @@ spectraldata = pd.read_csv(SPEC_PATH)
 midiscoredata = pd.read_csv(MIDI_SCORE)
 midieditdata = pd.read_csv(MIDI_EDITED)
 
+print(spectraldata)
+
 # model = svm.SVC()
 # model.fit(spectraldata,midiscoredata["Pitch_MIDI"])
 
