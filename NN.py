@@ -12,12 +12,24 @@ import matplotlib.pyplot as plt
 SPEC_PATH = os.path.join('Data','Csv','spectrum.csv')
 MIDI_SCORE = os.path.join('Data','Csv','ScoreMidi.csv')
 MIDI_EDITED = os.path.join('Data','Csv','EditedScore.csv')
-spectraldata = pd.read_csv(SPEC_PATH)
-midiscoredata = pd.read_csv(MIDI_SCORE)
-midieditdata = pd.read_csv(MIDI_EDITED)
+spectral_data = pd.read_csv(SPEC_PATH)
+midi_score_data = pd.read_csv(MIDI_SCORE)
+midi_edit_data = pd.read_csv(MIDI_EDITED)
+def find_and_write_labels(spec,midi):
+    midiSlices = []
+    midiRow = []
+    timeslice = 0
+    #let's just test with 10 values instead of the full list
+    for i in range(int(spec.shape[0])):
+        timeslice = float(spec.loc[i,"time in seconds"])
+        #print(timeslice)
+        a = midi.loc[(midi["Onset_s"] >= timeslice) & (midi["Onset_s"]+midi["Duration_s"] <= timeslice),["Pitch_MIDI"]]
+        if(a.size != 0):
+            print(a)
 
-print(spectraldata)
+    return 0
 
+find_and_write_labels(spectral_data,midi_edit_data)
 # model = svm.SVC()
 # model.fit(spectraldata,midiscoredata["Pitch_MIDI"])
 
