@@ -4,9 +4,9 @@
 
 import csv
 
-sampling_time = 128/44100
+sampling_time = 64/44100
 
-with open("doc/manual_mid.csv","r") as f1:
+with open("doc/manual_mid_del.csv","r") as f1:
     reader = list(csv.reader(f1))[4:-3]
     result = []
     while reader:

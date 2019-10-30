@@ -74,7 +74,7 @@ x = np.arange(0, len(data)) / samplerate    #波形生成のための時間軸�
 
 # Fsとoverlapでスペクトログラムの分解能を調整する。
 Fs = 256                                   # フレームサイズ
-overlap = 50                                # オーバーラップ率
+overlap = 75                               # オーバーラップ率
 
 # オーバーラップ抽出された時間波形配列
 time_array, N_ave, final_time = ov(data, samplerate, Fs, overlap)
@@ -85,8 +85,6 @@ time_array, acf = hanning(time_array, Fs, N_ave)
 # FFTをかける
 fft_array, fft_mean, fft_axis = fft_ave(time_array, samplerate, Fs, N_ave, acf)
 
-
-print(len(fft_array))
 
 import csv
 
