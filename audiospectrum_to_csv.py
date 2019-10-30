@@ -10,16 +10,15 @@ from scipy import signal
 import librosa as lb
 import librosa.display
 import matplotlib.pyplot as plt
-import time
+import time as t
 
 start = 0
-end = 0
 elapsed = 0
 
 #Find timestamps of the spectral data and calulate them in seconds
 def frame_timer(num_samps,spectrum_width,sr=22050):
     print("Finding timestamps...", end="")
-    s = time.time()
+    s = t.time()
     times = np.array(0)
     sound_length = (1/sr)*num_samps
     offset = sound_length / spectrum_width
@@ -27,9 +26,8 @@ def frame_timer(num_samps,spectrum_width,sr=22050):
     for i in range(spectrum_width-1):
         times.append(times[i] + offset)
     times = np.array(times)
-    e = time.time()
-    elapsed = e-s
-    print("Done in: " + "{0:.4f}".format(elapsed) + "s")
+    elapsed = t.time() - s
+    print("Done in: " + "{0:.2f}".format(elapsed) + "s")
     return times
 
 def audio_to_spectroCSV(audio_path,csv_path,nfft,overlap,remove_silence,Show_Graph,Write_File):
@@ -48,15 +46,14 @@ def audio_to_spectroCSV(audio_path,csv_path,nfft,overlap,remove_silence,Show_Gra
     
     #Place where the spectral data gets calculated
     print("Start calulating spectrum")
-    start = time.time()
+    start = t.time()
     overlap = int(nfft*overlap)
     spectrum = lb.core.stft(data,n_fft=nfft,hop_length=overlap)
     spectrum=np.abs(spectrum)
     frequency = lb.core.fft_frequencies(sr=sr, n_fft=nfft)
     times = frame_timer(int(data.shape[0]),int(spectrum.shape[1]),sr)
-    end = time.time()
-    elapsed = end-start
-    print("Done calculating spectrum in: " + "{0:.4f}".format(elapsed) + "s")
+    elapsed = t.time() - start
+    print("Done calculating spectrum in: " + "{0:.2f}".format(elapsed) + "s")
     print("The spectrum is a matrix with: " + str(int(spectrum.shape[0])) + " frequency bins & " + str(int(spectrum.shape[1])) + " time slices")
     print("Each time frame is: ~" + "{0:.2f}".format(times[2]-times[1]) + "s")
     print("The frequency interval is: ~" + "{0:.2f}".format(frequency[2] - frequency[1]) + "Hz")
@@ -65,7 +62,7 @@ def audio_to_spectroCSV(audio_path,csv_path,nfft,overlap,remove_silence,Show_Gra
     if(Write_File):
         #Write to csv file
         print("Start writing csv file")
-        start = time.time()
+        start = t.time()
         header = "time in seconds"
         for data in frequency:
             header += "," + str(data)
@@ -80,9 +77,8 @@ def audio_to_spectroCSV(audio_path,csv_path,nfft,overlap,remove_silence,Show_Gra
             wr.writerows(spectrum)
             spectrum_csv.close()
         
-        end = time.time()
-        elapsed = end - start
-        print("Finished writing spectral csv file in: " + "{0:.4f}".format(elapsed) + "s")
+        elapsed = t.time() - start
+        print("Finished writing spectral csv file in: " + "{0:.2f}".format(elapsed) + "s")
 
     #If desired a mathplot can be created if Show_Graph=True
     if(Show_Graph):
