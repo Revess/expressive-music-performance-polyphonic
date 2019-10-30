@@ -10,7 +10,7 @@ col = ["sp"+str(n) for n in range(256)]
 col.append("Pitch_YIN")
 
 data = pd.read_csv("doc/input2.csv", names = col)
-target = pd.read_csv("doc/manual_mid_edit_3.csv", names = ["Pitch_manual","power"]).drop(["power"], axis=1)
+target = pd.read_csv("doc/manual_mid_edit_2.csv", names = ["Pitch_manual","power"]).drop(["power"], axis=1)
 l_d, l_t = len(data), len(target)
 if(l_d<l_t):
     target = target[:l_d]
@@ -33,10 +33,6 @@ params = {
 }
 grid_search = GridSearchCV(MLPClassifier(), param_grid=params, cv=3, n_jobs=-1,)
 grid_search.fit(data, target)
-
-# import pickle
-# filename = 'finalized_model.sav'
-# pickle.dump(model, open(filename, 'wb'))
 
 
 with open("doc/result_param.txt","a",encoding="UTF-8") as f:
