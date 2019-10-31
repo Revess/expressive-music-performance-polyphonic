@@ -14,6 +14,7 @@ def find_and_write_labels(spec_path,midi_path,output_path):
     midiSlices = []
     print("starting to calculate labels")
     start = t.time()
+    print(spec.shape)
     for i in range(int(spec.shape[0])):
         midiRow = [0] * 128
         timeslice = float(spec.loc[i,"time in seconds"])
@@ -26,6 +27,7 @@ def find_and_write_labels(spec_path,midi_path,output_path):
         timeslice += 1
     elapsed = t.time() - start
     print("done calculating labels: " + "{0:.2f}".format(elapsed) + "s")
+    print(len(midiSlices))
 
     print("Start writing csv file")
     start = t.time()
