@@ -26,7 +26,7 @@ if(midi):
 #Write SPECTRAL CSV
 if(spectral):
     print("~~~~Spectral to CSV~~~~")
-    asc.audio_to_spectroCSV(AUDIO_PATH,SPEC_PATH,32768,0.01,remove_silence=False,Show_Graph=False,Write_File=True)
+    asc.audio_to_spectroCSV(AUDIO_PATH,SPEC_PATH,8192*2,0.025,remove_silence=False,Show_Graph=False,Write_File=True)
     print("\n")
 
 #Writing LABELS CSV
