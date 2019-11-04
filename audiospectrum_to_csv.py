@@ -11,24 +11,10 @@ import librosa as lb
 import librosa.display
 import matplotlib.pyplot as plt
 import time as t
+import frame_timer as ft
 
 start = 0
 elapsed = 0
-
-#Find timestamps of the spectral data and calulate them in seconds
-def frame_timer(num_samps,spectrum_width,sr=22050):
-    print("Finding timestamps...", end="")
-    s = t.time()
-    times = np.array(0)
-    sound_length = (1/sr)*num_samps
-    offset = sound_length / spectrum_width
-    times = [0]
-    for i in range(spectrum_width-1):
-        times.append(times[i] + offset)
-    times = np.array(times)
-    elapsed = t.time() - s
-    print("Done in: " + "{0:.2f}".format(elapsed) + "s")
-    return times
 
 def audio_to_spectroCSV(audio_path,csv_path,nfft,overlap,remove_silence,Show_Graph,Write_File):
     data, sr = lb.core.load(audio_path)
@@ -51,7 +37,7 @@ def audio_to_spectroCSV(audio_path,csv_path,nfft,overlap,remove_silence,Show_Gra
     spectrum = lb.core.stft(data,n_fft=nfft,hop_length=overlap)
     spectrum=np.abs(spectrum)
     frequency = lb.core.fft_frequencies(sr=sr, n_fft=nfft)
-    times = frame_timer(int(data.shape[0]),int(spectrum.shape[1]),sr)
+    times = ft.frame_timer(int(data.shape[0]),int(spectrum.shape[1]),sr)
     elapsed = t.time() - start
     print("Done calculating spectrum in: " + "{0:.2f}".format(elapsed) + "s")
     print("The spectrum is a matrix with: " + str(int(spectrum.shape[0])) + " frequency bins & " + str(int(spectrum.shape[1])) + " time slices")
