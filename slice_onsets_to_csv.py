@@ -18,13 +18,12 @@ def find_and_write_labels(spec_path,midi_path,output_path):
     for i in range(int(spec.shape[0])):
         midiRow = [0] * 128
         timeslice = float(spec.loc[i,"time in seconds"])
-        midifiltered = midi.loc[(midi["Onset_s"] <= timeslice) & (midi["Onset_s"] + midi["Duration_s"]  >= timeslice),["Pitch_MIDI"]]
-        if(midifiltered.size > 1):
-            for data in midifiltered["Pitch_MIDI"]:
-                midiRow[int(data)] = 1
+        for i in range(int(midi.shape[0])):
+            if(midi.loc[i,"Onset_s"] <= timeslice):
+                if((midi.loc[i,"Onset_s"] + midi.loc[i,"Duration_s"]) >= timeslice):
+                    midiRow[int(midi.loc[i,"Pitch_MIDI"])] = 1
         midiRow.insert(0,timeslice)
         midiSlices.append(midiRow)
-        timeslice += 1
     elapsed = t.time() - start
     print("done calculating labels: " + "{0:.2f}".format(elapsed) + "s")
     print(len(midiSlices))

@@ -19,7 +19,6 @@ test_vals = pd.read_csv(os.path.join('Data','Csv','spectrum2.csv'))
 y = pd.read_csv(os.path.join('Data','Csv','labels.csv'))
 elapsed = t.time() - start
 print("Done reading data: " + "{0:.2f}".format(elapsed) + "s")
-
 print("Training")
 start = t.time()
 timeslices = test_vals["time in seconds"]

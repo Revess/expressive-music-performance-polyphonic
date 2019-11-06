@@ -16,7 +16,33 @@ import frame_timer as ft
 start = 0
 elapsed = 0
 
-def audio_to_spectroCSV(audio_path,csv_path,nfft,overlap,remove_silence,Show_Graph,Write_File):
+def audio_to_spectroCSV(audio_path,csv_path,resolution,overlap,remove_silence,Show_Graph,Write_File):
+    """
+    audio_path: String
+    Give path to Audio file
+
+    csv_path: String
+    Give path to .csv file
+
+    resolution: Int
+    Give resolution, must be a percentage between 0 and 100
+
+    overlap: Int
+    Give overlap amount in MS
+
+    remove_silence: Bool
+    Trim silence at start of an audio file
+
+    Show_Graph: Bool
+    Plot spectral graph
+
+    Write_File: Bool
+    Write data to audio file
+    """
+    spectrum = 0
+    frequency = 0
+    n = 0
+
     data, sr = lb.core.load(audio_path)
     #If needed you can remove the starting silence of the audio file
     if(remove_silence):
@@ -29,20 +55,68 @@ def audio_to_spectroCSV(audio_path,csv_path,nfft,overlap,remove_silence,Show_Gra
                 data = data[i:]
                 break
         print("Finished removing silence, start time trimmed:" + str(i/sr))
-    
-    #Place where the spectral data gets calculated
-    print("Start calulating spectrum")
-    start = t.time()
-    overlap = int(nfft*overlap)
-    spectrum = lb.core.stft(data,n_fft=nfft,hop_length=overlap)
-    spectrum = np.abs(spectrum)
-    frequency = lb.core.fft_frequencies(sr=sr, n_fft=nfft)
-    times = ft.frame_timer(int(data.shape[0]),int(spectrum.shape[1]),sr)
-    elapsed = t.time() - start
-    print("Done calculating spectrum in: " + "{0:.2f}".format(elapsed) + "s")
-    print("The spectrum is a matrix with: " + str(int(spectrum.shape[0])) + " frequency bins & " + str(int(spectrum.shape[1])) + " time slices")
-    print("Each time frame is: ~" + "{0:.2f}".format((times[2]-times[1])*1000) + "ms")
-    print("The frequency interval is: ~" + "{0:.2f}".format(frequency[2] - frequency[1]) + "Hz")
+
+    if(resolution <= 1 and overlap >= 0 and overlap < sr):
+        #Place where the spectral data gets calculated
+        print("Start calulating spectrum")
+        start = t.time()
+        print("Creating frequency scale...")
+        overlap = int(((sr*resolution)/1000)*overlap)
+        nfftL = int(sr*resolution)
+        nfftM = int(sr*(resolution/6))
+        nfftH = int(sr*(resolution/8))
+        print("Generating 10-100Hz...")
+        spectrumL = lb.core.stft(data,n_fft=nfftL,hop_length=overlap)
+        spectrumL = np.abs(spectrumL)
+        print("Generating 100-1000Hz...")
+        spectrumM = lb.core.stft(data,n_fft=nfftM,hop_length=overlap)
+        spectrumM = np.abs(spectrumM)
+        print("Generating 1000-1kHz...")
+        spectrumH = lb.core.stft(data,n_fft=nfftH,hop_length=overlap)
+        spectrumH = np.abs(spectrumH)
+        frequencyL = lb.core.fft_frequencies(sr=sr, n_fft=nfftL)
+        frequencyM = lb.core.fft_frequencies(sr=sr, n_fft=nfftM)
+        frequencyH = lb.core.fft_frequencies(sr=sr, n_fft=nfftH)
+        print("Stitching FFT's together...")
+        for frequency in frequencyL:
+            if(frequency > 256):
+                spectrumL = spectrumL[:-(frequencyL.shape[0]-n), :]
+                frequencyL = frequencyL[:-(frequencyL.shape[0]-n)]
+                n = 0
+                for frequency in frequencyM:
+                    if(frequency > 2048):
+                        spectrumM = spectrumM[:n, :]
+                        frequencyM = frequencyM[:n]
+                        n = 0
+                        for frequency in frequencyM:
+                            if(frequency > 256):
+                                spectrumM = spectrumM[n:, :]
+                                frequencyM = frequencyM[n:] 
+                                break   
+                            else:
+                                n+=1
+                        n = 0
+                        for frequency in frequencyH:
+                            if(frequency > 2048):
+                                spectrumH = spectrumH[n:, :]
+                                frequencyH = frequencyH[n:]
+                                break
+                            else:
+                                n+=1
+                        break
+                    else:
+                        n+=1
+                break
+            else:
+                n+=1
+        spectrum = np.concatenate((spectrumL,spectrumM,spectrumH),axis=0)
+        frequency = np.concatenate((frequencyL,frequencyM,frequencyH),axis=0)
+        times = ft.frame_timer(int(data.shape[0]),int(spectrum.shape[1]),sr)
+        elapsed = t.time() - start
+        print("Done calculating spectrum in: " + "{0:.2f}".format(elapsed) + "s")
+        print("The spectrum is a matrix with: " + str(int(spectrum.shape[0])) + " frequency bins & " + str(int(spectrum.shape[1])) + " time slices")
+        print("Each time frame is: ~" + "{0:.2f}".format((times[2]-times[1])*1000) + "ms")
+        print("The highest frequency interval is: ~" + "{0:.2f}".format(frequencyL[2] - frequencyL[1]) + "Hz")
 
     #If desired a mathplot can be created if Show_Graph=True
     if(Show_Graph):
