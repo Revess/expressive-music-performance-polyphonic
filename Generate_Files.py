@@ -6,7 +6,7 @@ import output_to_midi as otm
 
 #Alter bools to generate new files
 midi = False
-spectral = True
+spectral = False
 labels = False
 output = True
 
@@ -20,7 +20,7 @@ PRED_MIDI_PATH = os.path.join('Data','Output','research.csv')
 SPEC_PATH = os.path.join('Data','Csv','spectrum.csv')
 SPEC2_PATH = os.path.join('Data','Csv','spectrum2.csv')
 AUDIO_PATH = os.path.join('Data','Audio','S01-AT.wav')
-AUDIO2_PATH = os.path.join('Data','Audio','S02-AT.wav')
+AUDIO2_PATH = os.path.join('Data','Audio','S01-BT.wav')
 LABELS_PATH = os.path.join('Data','Csv','labels.csv')
 
 #Write MIDI CSV
@@ -33,10 +33,10 @@ if(midi):
 if(spectral):
     print("~~~~Spectral to CSV~~~~")
     print("Transforming: " + str(AUDIO_PATH))
-    asc.audio_to_spectroCSV(AUDIO_PATH,SPEC_PATH,22050,0.02,remove_silence=False,Show_Graph=True,Write_File=False)
+    asc.audio_to_spectroCSV(AUDIO_PATH,SPEC_PATH,8192,0.0175,remove_silence=False,Show_Graph=False,Write_File=True)
     print("\n")
     print("Transforming: " + str(AUDIO2_PATH))
-    #asc.audio_to_spectroCSV(AUDIO2_PATH,SPEC2_PATH,4096,0.03125,remove_silence=False,Show_Graph=False,Write_File=True)
+    asc.audio_to_spectroCSV(AUDIO2_PATH,SPEC2_PATH,8192,0.0175,remove_silence=False,Show_Graph=False,Write_File=True)
     print("\n")
 
 #Writing LABELS CSV
@@ -48,3 +48,4 @@ if(labels):
 if(output and not labels and not spectral):
     print("~~~~Labels to MIDI~~~~")
     otm.output_to_midi(OUTPUT_PATH,PRED_MIDI_PATH)
+    #otm.output_to_midi(OUTPUT_PATH,LABELS_PATH)

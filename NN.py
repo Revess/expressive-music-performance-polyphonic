@@ -28,12 +28,12 @@ test_vals = test_vals.drop(["time in seconds"],1)
 x = x.drop(["time in seconds"],1)
 x_train, x_test, y_train, y_test = train_test_split(x,y, test_size= 0.25, random_state=27)
 model = mlp(hidden_layer_sizes=(100,100),verbose=True,max_iter=5000)
-model.fit(x_train,y_train)
+model.fit(x,y)
 elapsed = t.time() - start
 print("Done training: " + "{0:.2f}".format(elapsed) + "s")
 y_pred = model.predict(test_vals)
-print("Training set score: %f" % model.score(x_train, y_train))
-print("Test set score: %f" % model.score(x_test, y_test))
+print("Training set score: %f" % model.score(x, y))
+#print("Test set score: %f" % model.score(test_vals, y))
 
 # plot_learning_curve.plot_learning_curve(GaussianNB,"Curve",x_train,y,ylim=(0.7, 1.01), cv=ShuffleSplit(n_splits=100, test_size=0.2, random_state=0), n_jobs=4)
 
