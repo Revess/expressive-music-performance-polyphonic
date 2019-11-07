@@ -33,7 +33,7 @@ def audio_to_spectroCSV(audio_path,csv_path,nfft,overlap,remove_silence,Show_Gra
     #Place where the spectral data gets calculated
     print("Start calulating spectrum")
     start = t.time()
-    overlap = int(nfft*overlap)
+    overlap = int(nfft*(((sr/1000)*overlap)/sr))
     spectrum = lb.core.stft(data,n_fft=nfft,hop_length=overlap)
     spectrum = np.abs(spectrum)
     frequency = lb.core.fft_frequencies(sr=sr, n_fft=nfft)

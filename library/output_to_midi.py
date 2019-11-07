@@ -1,13 +1,16 @@
 import numpy as np
 import pandas as pd
 from midiutil.MidiFile import MIDIFile
+import time as t
 
 def output_to_midi(OUTPUT_PATH,PRED_MIDI_PATH):
+    print("reading csv file...")
     predmidi = pd.read_csv(PRED_MIDI_PATH)
     timeslice = predmidi["time in seconds"].to_numpy(dtype=float)
     predmidi = predmidi.drop(["time in seconds"],1)
     mididata = [[i for i in range(128)]]
     mididata.append([0]*128)
+    print("Transforming data...")
     for i in range(2):
         mididata.append([float(0)]*128)
     mididata = np.array(mididata, dtype=object)
@@ -46,8 +49,9 @@ def output_to_midi(OUTPUT_PATH,PRED_MIDI_PATH):
                 mf.addNote(track, channel, pitch, time, duration, volume)
                 mididata.iloc[j,2] = 0
                 mididata.iloc[j,3] = 0
-    print(numnotes)
+    print("number of generated notes: " + str(numnotes))
+    print("Writing midi file...")
     # write it to disk
     with open(OUTPUT_PATH, 'wb') as outf:
         mf.writeFile(outf)
-    return 0
+    print("Done!...")

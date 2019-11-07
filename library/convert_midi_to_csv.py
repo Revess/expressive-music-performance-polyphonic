@@ -49,7 +49,7 @@ def convert_midi_to_csv(midi_path, csv_path, write_midi_cvs_to_file=False):
                 myfile.close
                 
             if write_midi_cvs_to_file:
-                midi_csv_file_path = os.path.join(csv_path, folder, file_name[:-4] + "_MIDI.csv") 
+                midi_csv_file_path = os.path.join(csv_path, file_name[:-4] + "_MIDI.csv") 
                 csvfile = open(midi_csv_file_path,'w')
                 csvfile.writelines(midi_csv_list)
                 csvfile.close()
