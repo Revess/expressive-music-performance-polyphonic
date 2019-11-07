@@ -5,7 +5,7 @@ import Generate_Files as gf
 import NN as nn
 
 print("===========Generating_Inputs===========")
-gf.generate_files(GenerateLabels=True,GenerateSpec=True,WriteFile=True,window=2048*4,overlapping=10)
+gf.generate_files(GenerateLabels=True,GenerateSpec=True,WriteFile=True,window=2205,overlapping=10)
 print("===========Training===========")
 nn.NN(hiddenlayers=[110,125])
 print("===========Generating_Output===========")
