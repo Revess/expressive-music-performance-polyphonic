@@ -34,10 +34,8 @@ params = {
 grid_search = GridSearchCV(MLPClassifier(), param_grid=params, cv=3, n_jobs=-1,)
 grid_search.fit(data, target)
 
+gs_result = pd.DataFrame.from_dict(grid_search.cv_results_)
+gs_result.to_csv('doc/gs_result.csv')
 
-with open("doc/result_param.txt","a",encoding="UTF-8") as f:
-    f.write(str(grid_search.best_score_))
-    f.write(str(grid_search.best_params_))
-    f.write("\n")
 print(grid_search.best_score_)  # 最も良かったスコア
 print(grid_search.best_params_)  # 上記を記録したパラメータの組み合わせ
