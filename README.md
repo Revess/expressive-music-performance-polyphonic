@@ -11,6 +11,9 @@ File explenation:
     -Slice_onsets_to_csv.py:
       Write the labels for the NN by comparing time onsets of the 
       midi data to the timeslices of the spectral data.
+
+  -Main.py:
+    Contains all functions and is the file to easily run all functions nescesarry
     
   -Generate_Files.py:
     Run this file to generate any of the above called functions, 
