@@ -17,7 +17,7 @@ def find_and_write_labels(spec_path,midi_path,output_path):
     print(spec.shape)
     for i in range(int(spec.shape[0])):
         midiRow = [0] * 128
-        timeslice = float(spec.loc[i,"time in seconds"])
+        timeslice = float((spec.loc[i,"time in seconds"])[1])
         for i in range(int(midi.shape[0])):
             if(midi.loc[i,"Onset_s"] <= timeslice):
                 if((midi.loc[i,"Onset_s"] + midi.loc[i,"Duration_s"]) >= timeslice):

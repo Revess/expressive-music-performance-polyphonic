@@ -64,8 +64,24 @@ def audio_to_spectroCSV(audio_path,csv_path,nfft,overlap,remove_silence,Show_Gra
         header += "\n"
         spectrum = np.rot90(spectrum)
         spectrum = np.flip(spectrum,0)
-        spectrum = np.insert(spectrum,0,times,1)
-
+        tempspec = np.zeros((spectrum.shape[0],spectrum.shape[1]+1,3),dtype=object)
+        for i in range(int(tempspec.shape[0])):
+            for j in range(int(tempspec.shape[1])):
+                if(j == 0):
+                    tempspec[i,j] = [times[i],0,0]
+                else:
+                    for k in range(int(tempspec.shape[2])):
+                        if(i == 1 and k == 0):
+                            tempspec[i,j,k] = 0
+                        elif(i >= int(tempspec.shape[0])-2 and k == 2):
+                            tempspec[i,j,k] = 0
+                        elif(k == 0):
+                            tempspec[i,j,k] = spectrum[i-1,j-1]
+                        elif(k == 1):
+                            tempspec[i,j,k] = spectrum[i,j-1]
+                        elif(k == 2):
+                            tempspec[i,j,k] = spectrum[i+1,j-1]
+        spectrum = tempspec
         with open(csv_path, "w", newline='') as spectrum_csv:
             spectrum_csv.write(header)
             wr = csv.writer(spectrum_csv, quoting=csv.QUOTE_NONE)

@@ -18,7 +18,7 @@ def NN(WriteFile=True,hiddenlayers=[100,100,100,100]):
     y_test = pd.read_csv(os.path.join('.','Data','Csv','labels2.csv'))
     elapsed = t.time() - start
     print("Done reading data: " + "{0:.2f}".format(elapsed) + "s")
-
+    print(x)
     print("Training")
     start = t.time()
     timeslices = test_vals["time in seconds"]
