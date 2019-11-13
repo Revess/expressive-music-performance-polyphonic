@@ -1,12 +1,7 @@
-import csv
+from audiospectrum_to_csv import audio_to_spectroCSV as a2c
+from midi_edit import midi_edit
 
-with open("doc/spec_2.csv","r") as f1:
-    reader1 = list(csv.reader(f1))
-with open("doc/YIN_result_2.csv","r") as f2:
-    reader2 = list(csv.reader(f2))
+samplingrate = 4096
+timeflame = a2c("audio/Cello_Suite_1007_mono.wav","doc/spec.csv",samplingrate*2,0.01 ,False,False,True)
+midi_edit("doc/manual_mid.csv","doc/manual_mid_edit.csv",timeflame)
 
-with open("doc/input2.csv","w") as fw:
-    writer = csv.writer(fw,lineterminator="\n")
-    for n in range(len(reader2)):
-        reader1[n].append(reader2[n][1])
-        writer.writerow(reader1[n])

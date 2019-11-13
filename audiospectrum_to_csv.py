@@ -11,24 +11,10 @@ import librosa as lb
 import librosa.display
 import matplotlib.pyplot as plt
 import time as t
+import frame_timer as ft
 
 start = 0
 elapsed = 0
-
-#Find timestamps of the spectral data and calulate them in seconds
-def frame_timer(num_samps,spectrum_width,sr=22050):
-    print("Finding timestamps...", end="")
-    s = t.time()
-    times = np.array(0)
-    sound_length = (1/sr)*num_samps
-    offset = sound_length / spectrum_width
-    times = [0]
-    for i in range(spectrum_width-1):
-        times.append(times[i] + offset)
-    times = np.array(times)
-    elapsed = t.time() - s
-    print("Done in: " + "{0:.2f}".format(elapsed) + "s")
-    return times
 
 def audio_to_spectroCSV(audio_path,csv_path,nfft,overlap,remove_silence,Show_Graph,Write_File):
     data, sr = lb.core.load(audio_path)
@@ -49,14 +35,24 @@ def audio_to_spectroCSV(audio_path,csv_path,nfft,overlap,remove_silence,Show_Gra
     start = t.time()
     overlap = int(nfft*overlap)
     spectrum = lb.core.stft(data,n_fft=nfft,hop_length=overlap)
-    spectrum=np.abs(spectrum)
+    spectrum = np.abs(spectrum)
     frequency = lb.core.fft_frequencies(sr=sr, n_fft=nfft)
-    times = frame_timer(int(data.shape[0]),int(spectrum.shape[1]),sr)
+    times = ft.frame_timer(int(data.shape[0]),int(spectrum.shape[1]),sr)
     elapsed = t.time() - start
-    print("Done calculating spectrum in: " + "{0:.2f}".format(elapsed) + "s")
+    timeflame = times[2]-times[1]
+    # print("Done calculating spectrum in: " + "{0:.2f}".format(elapsed) + "s")
     print("The spectrum is a matrix with: " + str(int(spectrum.shape[0])) + " frequency bins & " + str(int(spectrum.shape[1])) + " time slices")
-    print("Each time frame is: ~" + "{0:.2f}".format(times[2]-times[1]) + "s")
-    print("The frequency interval is: ~" + "{0:.2f}".format(frequency[2] - frequency[1]) + "Hz")
+    print("Each time frame is: ~" + "{0:.2f}".format(timeflame*1000) + "ms")
+    # print("The frequency interval is: ~" + "{0:.2f}".format(frequency[2] - frequency[1]) + "Hz")
+
+    #If desired a mathplot can be created if Show_Graph=True
+    if(Show_Graph):
+        #Plot test
+        librosa.display.specshow(librosa.amplitude_to_db(spectrum,ref=np.max),y_axis='log', x_axis='time')
+        plt.title('Power spectrogram')
+        plt.colorbar(format='%+2.0f dB')
+        plt.tight_layout()
+        plt.show()
 
     #If Write_File=True, the Spectral data gets written to csv file
     if(Write_File):
@@ -79,12 +75,4 @@ def audio_to_spectroCSV(audio_path,csv_path,nfft,overlap,remove_silence,Show_Gra
         
         elapsed = t.time() - start
         print("Finished writing spectral csv file in: " + "{0:.2f}".format(elapsed) + "s")
-
-    #If desired a mathplot can be created if Show_Graph=True
-    if(Show_Graph):
-        #Plot test
-        librosa.display.specshow(librosa.amplitude_to_db(spectrum,ref=np.max),y_axis='log', x_axis='time')
-        plt.title('Power spectrogram')
-        plt.colorbar(format='%+2.0f dB')
-        plt.tight_layout()
-        plt.show()
+    return times[2]-times[1]

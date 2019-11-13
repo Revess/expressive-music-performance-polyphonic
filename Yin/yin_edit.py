@@ -248,7 +248,7 @@ def main(audioFileName="../audio/Cello_Suite_1007_mono.wav", w_len=1024, w_step=
 #--------------------------------------------------------------------
     import csv
     MED_output = medfilt(argmins,29)
-    with open("../doc/YIN_result_2.csv","w",encoding = "UTF-8") as f1:
+    with open("../doc/YIN_result_nofilt.csv","w",encoding = "UTF-8") as f1:
         writer = csv.writer(f1, lineterminator='\n')
         for i in range(len(times)):
             writer.writerow([times[i],MED_output[i]])

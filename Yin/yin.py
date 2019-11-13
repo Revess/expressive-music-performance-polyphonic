@@ -202,7 +202,7 @@ def compute_yin(sig, sr, dataFileName=None, w_len=512, w_step=256, f0_min=100, f
     return pitches, harmonic_rates, argmins, times
 
 
-def main(audioFileName="../segment1.wav", w_len=1024, w_step=256, f0_min=70, f0_max=200, harmo_thresh=0.85, audioDir="./", dataFileName=None, verbose=4):
+def main(audioFileName="../audio/Cello_Suite_1007_mono.wav", w_len=1024, w_step=256, f0_min=70, f0_max=200, harmo_thresh=0.85, audioDir="./", dataFileName=None, verbose=4):
     """
     Run the computation of the Yin algorithm on a example file.
 

@@ -1,41 +1,37 @@
 import pandas as pd
 from sklearn.neural_network import MLPClassifier
-from sklearn.model_selection import train_test_split,GridSearchCV
-from sklearn.metrics import classification_report,accuracy_score
-from sklearn.utils.validation import column_or_1d
+from sklearn.metrics import classification_report
+from sklearn.model_selection import cross_val_score
 import numpy as np
+import csv
+import time
+from shape_input import shape_input
 
+t1 = time.time()
 
-col = ["sp"+str(n) for n in range(256)]
-col.append("Pitch_YIN")
+data, target, sampling_rate = shape_input("doc/spec.csv","doc/manual_mid_edit.csv",True)
 
-data = pd.read_csv("doc/input2.csv", names = col)
-target = pd.read_csv("doc/manual_mid_edit_2.csv", names = ["Pitch_manual","power"]).drop(["power"], axis=1)
-l_d, l_t = len(data), len(target)
-if(l_d<l_t):
-    target = target[:l_d]
-else:
-    data = data[:l_t]
-df = pd.concat([data, target], axis=1)
-df = df[df['Pitch_manual'] != 0]
+clf = MLPClassifier(
+    hidden_layer_sizes = (3000,2000,1000,29),
+    max_iter = 300,
+    early_stopping = True,
+    momentum = 0.005,
+    alpha = 5,
+    )
 
-target = df["Pitch_manual"]
-data = df.drop(["Pitch_manual"], axis=1)
+clf.fit(data,target)
+predict = clf.predict(data)
+df = pd.DataFrame(classification_report(target, predict,output_dict=True))
+df.to_csv("doc/result_NN_.csv")
 
-# 試行するパラメータを羅列する
-params = {
-    "max_iter":[300],
-    "early_stopping":[True],
-    "momentum": [0.005],
-    "alpha":[5],
-    "hidden_layer_sizes":[(225,193,161,129,97,66)],
-    # "batch_size":[100,200,500,1000],
-}
-grid_search = GridSearchCV(MLPClassifier(), param_grid=params, cv=3, n_jobs=-1,)
-grid_search.fit(data, target)
+with open("doc/output.csv","w") as f:
+    i = 0
+    writer = csv.writer(f,lineterminator="\n")
+    for l in predict:
+        writer.writerow([i,440*pow(2,(int(l)-69)/12)])
+        i = i + sampling_rate
 
-gs_result = pd.DataFrame.from_dict(grid_search.cv_results_)
-gs_result.to_csv('doc/gs_result.csv')
-
-print(grid_search.best_score_)  # 最も良かったスコア
-print(grid_search.best_params_)  # 上記を記録したパラメータの組み合わせ
+t2 = time.time()
+with open("doc/result.txt","w",encoding = "UTF-8") as f:
+    f.write(str(cross_val_score(clf, data, target, cv=10)))
+    f.write(str(t2-t1))
