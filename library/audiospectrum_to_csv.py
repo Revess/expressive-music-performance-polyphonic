@@ -18,6 +18,7 @@ elapsed = 0
 
 def audio_to_spectroCSV(audio_path,csv_path,nfft,overlap,remove_silence,Show_Graph,Write_File):
     data, sr = lb.core.load(audio_path)
+    data = lb.util.normalize(data)
     #If needed you can remove the starting silence of the audio file
     if(remove_silence):
         print("Starting to remove start silence")
@@ -33,7 +34,7 @@ def audio_to_spectroCSV(audio_path,csv_path,nfft,overlap,remove_silence,Show_Gra
     #Place where the spectral data gets calculated
     print("Start calulating spectrum")
     start = t.time()
-    overlap = int(nfft*(((sr/1000)*overlap)/sr))
+    overlap = int(nfft*overlap)
     spectrum = lb.core.stft(data,n_fft=nfft,hop_length=overlap)
     spectrum = np.abs(spectrum)
     frequency = lb.core.fft_frequencies(sr=sr, n_fft=nfft)

@@ -23,8 +23,8 @@ def generate_files(GenerateMidi = False, GenerateSpec = False, GenerateLabels = 
     SPEC2_PATH = os.path.join('.','Data','Csv','spectrum2.csv')
     SPEC3_PATH = os.path.join('.','Data','Csv','spectrum3.csv')
     AUDIO_PATH = os.path.join('.','Data','Audio','S01-CT.wav')
-    AUDIO2_PATH = os.path.join('.','Data','Audio','S01-BT.wav')
-    AUDIO3_PATH = os.path.join('.','Data','Audio','S01-AT.wav')
+    AUDIO2_PATH = os.path.join('.','Data','Audio','S02-AT.wav')
+    AUDIO3_PATH = os.path.join('.','Data','Audio','S02-AT.wav')
     LABELS_PATH = os.path.join('.','Data','Csv','labels.csv')
     LABELS2_PATH = os.path.join('.','Data','Csv','labels2.csv')
 

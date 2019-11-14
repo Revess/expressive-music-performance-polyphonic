@@ -26,7 +26,7 @@ def NN(WriteFile=True,hiddenlayers=[100,100,100,100]):
     x = x.drop(["time in seconds"],1)
     x_test = x_test.drop(["time in seconds"],1)
     y_test = y_test.drop(["time in seconds"],1)
-    model = mlp(hidden_layer_sizes=(int(hiddenlayers[0]),int(hiddenlayers[0])),verbose=True,max_iter=5000)
+    model = mlp(hidden_layer_sizes=(int(hiddenlayers[0]),int(hiddenlayers[1])),verbose=True,max_iter=5000)
     model.fit(x,y)
     elapsed = t.time() - start
     print("Done training: " + "{0:.2f}".format(elapsed) + "s")
