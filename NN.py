@@ -5,12 +5,12 @@ from sklearn.model_selection import cross_val_score
 import numpy as np
 import csv
 import time
-from shape_input import shape_input
+from func import shape_input
 
 
 t1 = time.time()
 
-context = True
+context = True          #if True, include the previous and next context to input
 if context:
     f1 = "doc/result_NN_c.csv"
     f2 = "doc/output_c.csv"
@@ -20,7 +20,7 @@ else:
     f2 = "doc/output.csv"
     f3 = "doc/result.txt"
 
-data, target, sampling_rate = shape_input("doc/spec.csv","doc/manual_mid_edit.csv",context)
+data, target, sampling_rate = shape_input.shape_input("doc/spec.csv","doc/manual_mid_edit.csv",context)
 
 clf = MLPClassifier(
     hidden_layer_sizes = (3000,2000,1000,29),

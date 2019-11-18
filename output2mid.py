@@ -1,6 +1,6 @@
 import pickle
 import csv
-from filters import medfilt
+from func import filters
 
 sampling_rate= 64/44100
 
