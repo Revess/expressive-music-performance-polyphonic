@@ -22,7 +22,7 @@ def midi_edit(input_f,output_f,timeflame):
         n = 0
         for r in result:
             while n*timeflame < r[0]:
-                writer.writerow([n,0,0])
+                writer.writerow([n*timeflame,0,0])
                 n += 1 
             while n*timeflame <= r[1]:
                 writer.writerow([n*timeflame,r[2],r[3]])

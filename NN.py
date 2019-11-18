@@ -7,9 +7,20 @@ import csv
 import time
 from shape_input import shape_input
 
+
 t1 = time.time()
 
-data, target, sampling_rate = shape_input("doc/spec.csv","doc/manual_mid_edit.csv",True)
+context = True
+if context:
+    f1 = "doc/result_NN_c.csv"
+    f2 = "doc/output_c.csv"
+    f3 = "doc/result_c.txt"
+else:
+    f1 = "doc/resultNN.csv"
+    f2 = "doc/output.csv"
+    f3 = "doc/result.txt"
+
+data, target, sampling_rate = shape_input("doc/spec.csv","doc/manual_mid_edit.csv",context)
 
 clf = MLPClassifier(
     hidden_layer_sizes = (3000,2000,1000,29),
@@ -17,21 +28,23 @@ clf = MLPClassifier(
     early_stopping = True,
     momentum = 0.005,
     alpha = 5,
+    verbose = True,
+    # batch_size = 200,
     )
 
 clf.fit(data,target)
 predict = clf.predict(data)
 df = pd.DataFrame(classification_report(target, predict,output_dict=True))
-df.to_csv("doc/result_NN_.csv")
 
-with open("doc/output.csv","w") as f:
+df.to_csv(f1)
+
+with open(f2,"w") as f:
     i = 0
     writer = csv.writer(f,lineterminator="\n")
     for l in predict:
         writer.writerow([i,440*pow(2,(int(l)-69)/12)])
         i = i + sampling_rate
 
-t2 = time.time()
-with open("doc/result.txt","w",encoding = "UTF-8") as f:
+with open(f3,"w",encoding = "UTF-8") as f:
     f.write(str(cross_val_score(clf, data, target, cv=10)))
-    f.write(str(t2-t1))
+    f.write(str(time.time()-t1))

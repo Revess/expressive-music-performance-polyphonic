@@ -4,23 +4,9 @@ from sklearn.model_selection import train_test_split,GridSearchCV
 from sklearn.metrics import classification_report,accuracy_score
 from sklearn.utils.validation import column_or_1d
 import numpy as np
+from shape_input import shape_input
 
-
-col = ["sp"+str(n) for n in range(256)]
-col.append("Pitch_YIN")
-
-data = pd.read_csv("doc/input2.csv", names = col)
-target = pd.read_csv("doc/manual_mid_edit_2.csv", names = ["Pitch_manual","power"]).drop(["power"], axis=1)
-l_d, l_t = len(data), len(target)
-if(l_d<l_t):
-    target = target[:l_d]
-else:
-    data = data[:l_t]
-df = pd.concat([data, target], axis=1)
-df = df[df['Pitch_manual'] != 0]
-
-target = df["Pitch_manual"]
-data = df.drop(["Pitch_manual"], axis=1)
+data, target, sampling_rate = shape_input("doc/spec.csv","doc/manual_mid_edit.csv")
 
 # 試行するパラメータを羅列する
 params = {
