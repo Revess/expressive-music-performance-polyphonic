@@ -2,10 +2,23 @@ import numpy as np
 import pandas as pd
 from midiutil.MidiFile import MIDIFile
 import time as t
+import os
+
+MIDISCORE_PATH = os.path.join("Data","Csv","scorelabels.csv")
+
+def polydtw(x,y):
+    dtw = np.array([])
+    for i in range(int(x.shape[0])):
+        for j in range(int(x.shape[1])):
+            
+
+    return dtw
 
 def output_to_midi(OUTPUT_PATH,PRED_MIDI_PATH):
     print("reading csv file...")
     predmidi = pd.read_csv(PRED_MIDI_PATH)
+    scoremidi = pd.read_csv(MIDISCORE_PATH)
+
     timeslice = predmidi["time in seconds"].to_numpy(dtype=float)
     predmidi = predmidi.drop(["time in seconds"],1)
     mididata = [[i for i in range(128)]]

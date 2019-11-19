@@ -14,8 +14,8 @@ def NN(WriteFile=True,hiddenlayers=[100,100,100,100]):
     x = pd.read_csv(os.path.join('.','Data','Csv','spectrum.csv'))
     test_vals = pd.read_csv(os.path.join('.','Data','Csv','spectrum2.csv'))
     y = pd.read_csv(os.path.join('.','Data','Csv','labels.csv'))
-    x_test = pd.read_csv(os.path.join('.','Data','Csv','spectrum3.csv'))
-    y_test = pd.read_csv(os.path.join('.','Data','Csv','labels2.csv'))
+    # x_test = pd.read_csv(os.path.join('.','Data','Csv','spectrum3.csv'))
+    # y_test = pd.read_csv(os.path.join('.','Data','Csv','labels2.csv'))
     elapsed = t.time() - start
     print("Done reading data: " + "{0:.2f}".format(elapsed) + "s")
     print("Training")
@@ -24,15 +24,15 @@ def NN(WriteFile=True,hiddenlayers=[100,100,100,100]):
     y = y.drop(["time in seconds"],1)
     test_vals = test_vals.drop(["time in seconds"],1)
     x = x.drop(["time in seconds"],1)
-    x_test = x_test.drop(["time in seconds"],1)
-    y_test = y_test.drop(["time in seconds"],1)
+    # x_test = x_test.drop(["time in seconds"],1)
+    # y_test = y_test.drop(["time in seconds"],1)
     model = mlp(hidden_layer_sizes=(int(hiddenlayers[0]),int(hiddenlayers[1])),verbose=True,max_iter=5000)
     model.fit(x,y)
     elapsed = t.time() - start
     print("Done training: " + "{0:.2f}".format(elapsed) + "s")
     y_pred = model.predict(test_vals)
     print("Training set score: %f" % model.score(x, y))
-    print("Test set score: %f" % model.score(x_test, y_test))
+    print("Test set score: %f" % model.score(test_vals, y_pred))
 
     if(WriteFile):
         header = "time in seconds"

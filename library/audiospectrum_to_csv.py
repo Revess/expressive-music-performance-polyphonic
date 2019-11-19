@@ -17,6 +17,17 @@ start = 0
 elapsed = 0
 
 def audio_to_spectroCSV(audio_path,csv_path,nfft,overlap,remove_silence,Show_Graph,Write_File):
+    """
+    A audio spectrum analyizing tool that converts the input file to a .csv file
+
+    audio_path (string): audio file path
+    csv_path (string): csv file path
+    nfft (int): give fft window size in samples
+    overlap (float): give percentage (in decimalpoint) the amount of overlap to be given
+    remove_silence (bool): trim start silence of piece of audio
+    Show_Graph (bool): show a spectrogram graph of the analysis
+    Write_File (bool): Write output to file if true
+    """
     data, sr = lb.core.load(audio_path)
     data = lb.util.normalize(data)
     #If needed you can remove the starting silence of the audio file
@@ -61,11 +72,11 @@ def audio_to_spectroCSV(audio_path,csv_path,nfft,overlap,remove_silence,Show_Gra
         start = t.time()
         spectrum = np.rot90(spectrum)
         spectrum = np.flip(spectrum,0)
-        tempspec = np.zeros((spectrum.shape[0],spectrum.shape[1]*3))
+        tempspec = np.zeros((spectrum.shape[0],spectrum.shape[1]*4))
         for timeindex in range(int(tempspec.shape[0])):
             for freqindex in range(int(tempspec.shape[1])):
-                modfreq = int(freqindex/3)
-                modindex = freqindex % 3
+                modfreq = int(freqindex/4)
+                modindex = freqindex % 4
                 if(timeindex == 0):
                     if(modindex == 0):
                         tempspec[timeindex,freqindex] = 0
@@ -73,12 +84,25 @@ def audio_to_spectroCSV(audio_path,csv_path,nfft,overlap,remove_silence,Show_Gra
                         tempspec[timeindex,freqindex] = spectrum[timeindex,modfreq]
                     elif(modindex == 2):
                         tempspec[timeindex,freqindex] = spectrum[timeindex+1,modfreq]
+                    elif(modindex == 3):
+                        tempspec[timeindex,freqindex] = spectrum[timeindex+2,modfreq]
                 elif(timeindex >= int(tempspec.shape[0])-1):
                     if(modindex == 0):
                         tempspec[timeindex,freqindex] = spectrum[timeindex-1,modfreq]
                     elif(modindex == 1):
                         tempspec[timeindex,freqindex] = spectrum[timeindex,modfreq]
                     elif(modindex == 2):
+                        tempspec[timeindex,freqindex] = 0
+                    elif(modindex == 3):
+                        tempspec[timeindex,freqindex] = 0
+                elif(timeindex == int(tempspec.shape[0])-2):
+                    if(modindex == 0):
+                        tempspec[timeindex,freqindex] = spectrum[timeindex-1,modfreq]
+                    elif(modindex == 1):
+                        tempspec[timeindex,freqindex] = spectrum[timeindex,modfreq]
+                    elif(modindex == 2):
+                        tempspec[timeindex,freqindex] = spectrum[timeindex+1,modfreq]
+                    elif(modindex == 3):
                         tempspec[timeindex,freqindex] = 0
                 elif(timeindex != 0):
                     if(modindex == 0):
@@ -87,14 +111,16 @@ def audio_to_spectroCSV(audio_path,csv_path,nfft,overlap,remove_silence,Show_Gra
                         tempspec[timeindex,freqindex] = spectrum[timeindex,modfreq]
                     elif(modindex == 2):
                         tempspec[timeindex,freqindex] = spectrum[timeindex+1,modfreq]
+                    elif(modindex == 3):
+                        tempspec[timeindex,freqindex] = spectrum[timeindex+2,modfreq]
 
         spectrum = tempspec
         spectrum = np.insert(spectrum,0,times,1)
         header = "time in seconds"
         for freqindex in range(int(spectrum.shape[1])-1):
-            mod = freqindex % 3
+            mod = freqindex % 4
             if(mod == 0):
-                header += "," + str(frequency[round(freqindex/3)])
+                header += "," + str(frequency[round(freqindex/4)])
             else:
                 header += "," + " "
         header += "\n"
