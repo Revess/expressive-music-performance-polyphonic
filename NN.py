@@ -6,6 +6,7 @@ import numpy as np
 import csv
 import time
 from func import shape_input
+import pickle
 
 
 t1 = time.time()
@@ -32,6 +33,7 @@ clf = MLPClassifier(
     # batch_size = 200,
     )
 
+
 clf.fit(data,target)
 predict = clf.predict(data)
 df = pd.DataFrame(classification_report(target, predict,output_dict=True))
@@ -48,3 +50,8 @@ with open(f2,"w") as f:
 with open(f3,"w",encoding = "UTF-8") as f:
     f.write(str(cross_val_score(clf, data, target, cv=10)))
     f.write(str(time.time()-t1))
+
+
+
+with open('model.pickle', mode='wb') as fp:
+    pickle.dump(clf, fp)

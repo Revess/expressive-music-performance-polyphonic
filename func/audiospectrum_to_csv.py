@@ -11,7 +11,7 @@ import librosa as lb
 import librosa.display
 import matplotlib.pyplot as plt
 import time as t
-import frame_timer as ft
+from func import frame_timer
 
 start = 0
 elapsed = 0
@@ -37,7 +37,7 @@ def audio_to_spectroCSV(audio_path,csv_path,nfft,overlap,remove_silence,Show_Gra
     spectrum = lb.core.stft(data,n_fft=nfft,hop_length=overlap)
     spectrum = np.abs(spectrum)
     frequency = lb.core.fft_frequencies(sr=sr, n_fft=nfft)
-    times = ft.frame_timer(int(data.shape[0]),int(spectrum.shape[1]),sr)
+    times = frame_timer.frame_timer(int(data.shape[0]),int(spectrum.shape[1]),sr)
     elapsed = t.time() - start
     timeflame = times[2]-times[1]
     # print("Done calculating spectrum in: " + "{0:.2f}".format(elapsed) + "s")

@@ -2,7 +2,7 @@ import pickle
 import csv
 from func import filters
 
-sampling_rate= 64/44100
+sampling_rate= 4098/44100
 
 loaded_model = pickle.load(open('model.sav', 'rb'))
 with open("doc/input2.csv","r") as f:
