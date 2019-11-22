@@ -3,23 +3,67 @@ import pandas as pd
 from midiutil.MidiFile import MIDIFile
 import time as t
 import os
+from matplotlib import pyplot as plt
+from dtw import dtw,warp
 
-MIDISCORE_PATH = os.path.join("Data","Csv","scorelabels.csv")
+MIDISCORE_PATH = os.path.join("Data","Csv","ScoreMidi.csv")
 
-def polydtw(x,y):
-    dtw = np.array([])
-    for i in range(int(x.shape[0])):
-        for j in range(int(x.shape[1])):
-            
+def labels_to_notes(labels):
+    y_labels = np.array([],dtype=int)
+    labels = labels.drop(["time in seconds"],1)
+    notes = labels.columns.values.astype(dtype=int)
+    for i in range(int(labels.shape[0])):
+        stepcounter = 0
+        for j in range(int(labels.shape[1])):
+            value = labels.iloc[i,j]
+            if(value != 0):
+                y_labels = np.append(y_labels,notes[j])
+            else:
+                stepcounter += 1
+        if(stepcounter == 128):
+            y_labels = np.append(y_labels,128)
+    return y_labels
 
-    return dtw
+def stretch(predictions,score,timeslices):
+    midiSlices = []
+    scalingFactor = predictions.loc[int(predictions.shape[0])-1,"time in seconds"]/score.loc[int(score.shape[0])-1,"Onset_s"]
+    for j in range(int(predictions.shape[0])):
+        midiRow = [0] * 128
+        timeslice = float(predictions.loc[j,"time in seconds"])
+        for i in range(int(score.shape[0])):
+            if((score.loc[i,"Onset_s"] * scalingFactor) <= timeslice):
+                if(((score.loc[i,"Onset_s"] + score.loc[i,"Duration_s"]) * scalingFactor) >= timeslice):
+                    midiRow[int(score.loc[i,"Pitch_MIDI"])] = 1
+        midiRow.insert(0,timeslice)
+        midiSlices.append(midiRow)
+    midiSlices = np.array(midiSlices)
+    return midiSlices
 
-def output_to_midi(OUTPUT_PATH,PRED_MIDI_PATH):
+def dtwtransform(predictions,score,plot=False):
+    #Predict the DTW
+    timeslices = predictions["time in seconds"].to_numpy(dtype=float)
+    score = stretch(predictions,score,timeslices)
+    predictions = predictions.to_numpy()
+    alignment = dtw(predictions,score)
+    warped = warp(alignment,index_reference=False)
+    #Plot outcome if nescesarry
+    if(plot):
+        plt.plot(alignment.index1,alignment.index2) 
+        plt.plot(predictions[warped])
+        plt.show()
+        np.savetxt(("Data/bak/output.txt"),predictions[warped])
+    return predictions[warped]
+
+def output_to_midi(OUTPUT_PATH,PRED_MIDI_PATH,DynTW=True):
     print("reading csv file...")
     predmidi = pd.read_csv(PRED_MIDI_PATH)
     scoremidi = pd.read_csv(MIDISCORE_PATH)
-
-    timeslice = predmidi["time in seconds"].to_numpy(dtype=float)
+    #Do a DTW transformation
+    if(DynTW):
+        columns = predmidi.columns.values
+        predmidi = dtwtransform(predmidi,scoremidi,plot=False)
+        predmidi = pd.DataFrame(predmidi,columns=columns)
+    timeslice = predmidi["time in seconds"]
     predmidi = predmidi.drop(["time in seconds"],1)
     mididata = [[i for i in range(128)]]
     mididata.append([0]*128)

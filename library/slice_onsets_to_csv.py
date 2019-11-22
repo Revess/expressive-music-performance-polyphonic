@@ -4,7 +4,7 @@ import os
 import pandas as pd
 import csv
 
-def find_and_write_labels(spec_path,midi_path,output_path):
+def find_and_write_labels(spec_path,midi_path,output_path,Stretch=False):
     print("Reading data")
     start = t.time()
     spec = pd.read_csv(spec_path)
@@ -12,12 +12,14 @@ def find_and_write_labels(spec_path,midi_path,output_path):
     elapsed = t.time() - start
     print("done reading data: " + "{0:.2f}".format(elapsed) + "s")
     midiSlices = []
+    if(Stretch):
+        print(spec.loc[int(spec.shape[0])-1,"time in seconds"]/midi.loc[int(midi.shape[0])-1,"Onset_s"])
     print("starting to calculate labels")
     start = t.time()
     print(spec.shape)
-    for i in range(int(spec.shape[0])):
+    for j in range(int(spec.shape[0])):
         midiRow = [0] * 128
-        timeslice = float(spec.loc[i,"time in seconds"])
+        timeslice = float(spec.loc[j,"time in seconds"])
         for i in range(int(midi.shape[0])):
             if(midi.loc[i,"Onset_s"] <= timeslice):
                 if((midi.loc[i,"Onset_s"] + midi.loc[i,"Duration_s"]) >= timeslice):
