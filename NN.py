@@ -12,6 +12,10 @@ import pickle
 t1 = time.time()
 
 context = True          #if True, include the previous and next context to input
+output = True
+cross_val = False
+save_model = True
+
 if context:
     f1 = "doc/result_NN_c.csv"
     f2 = "doc/output_c.csv"
@@ -33,25 +37,24 @@ clf = MLPClassifier(
     # batch_size = 200,
     )
 
-
 clf.fit(data,target)
 predict = clf.predict(data)
 df = pd.DataFrame(classification_report(target, predict,output_dict=True))
 
 df.to_csv(f1)
 
-with open(f2,"w") as f:
-    i = 0
-    writer = csv.writer(f,lineterminator="\n")
-    for l in predict:
-        writer.writerow([i,440*pow(2,(int(l)-69)/12)])
-        i = i + sampling_rate
+if output:
+    with open(f2,"w") as f:
+        i = 0
+        writer = csv.writer(f,lineterminator="\n")
+        for l in predict:
+            writer.writerow([i,440*pow(2,(int(l)-69)/12)])
+            i = i + sampling_rate
 
-with open(f3,"w",encoding = "UTF-8") as f:
-    f.write(str(cross_val_score(clf, data, target, cv=10)))
-    f.write(str(time.time()-t1))
+if cross_val:
+    with open(f3,"w",encoding = "UTF-8") as f:
+        f.write(str(cross_val_score(clf, data, target, cv=10)))
+        f.write(str(time.time()-t1))
 
-
-
-with open('model.pickle', mode='wb') as fp:
-    pickle.dump(clf, fp)
+if save_model:
+    pickle.dump(clf, open('model_c.sav', 'wb'))

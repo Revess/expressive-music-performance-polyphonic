@@ -1,4 +1,9 @@
 import csv
+import numpy as np
+from func import filters
+from sklearn.metrics import f1_score
+
+
 
 def note(l):
     return 440*pow(2,(int(l)-69)/12)
@@ -16,14 +21,36 @@ while reader:
             reader.pop(i)
             break
 
-with open("doc/res2/output.csv","r") as f:   
+Filter = True
+
+with open("doc/res3/output.csv","r") as f:   
     output = list(csv.reader(f))
+    if Filter:
+        filtered = filters.medfilt( [float(i[1]) for i in output], 9 )
+        output = [[output[i][0],filtered[i]] for i in range(len(output))]
+        
     n = 0
     ans = 0
     for o in output:
+        if float(o[0]) > result[n][1]:
+            n += 1
         if result[n][0] <= float(o[0]) <= result[n][1]:
             if note(result[n][2]) == float(o[1]):
                 ans += 1
-        if float(o[0]) > result[n][1]:
-            n += 1
 print(ans/len(output))
+
+#     n = 0
+#     res = []
+#     for o in output:
+#         if float(o[0]) < result[n][0]:
+#             res.append(0)
+#         if float(o[0]) > result[n][1]:
+#             n += 1
+#         if result[n][0] <= float(o[0]) <= result[n][1]:
+#             res.append(note(result[n][2]))
+# o = [float(o[1]) for o in  output]
+# o = o[:len(res)]
+# # o = np.ndarray(o)
+# # res = np.ndarray(res)
+
+# print(f1_score(res, o))
