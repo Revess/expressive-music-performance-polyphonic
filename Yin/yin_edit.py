@@ -144,7 +144,7 @@ def getPitch(cmdf, tau_min, tau_max, harmo_th=0.1):
 
 
 
-def compute_yin(sig, sr, dataFileName=None, w_len=512, w_step=256, f0_min=100, f0_max=500, harmo_thresh=0.1):
+def compute_yin(sig, sr, dataFileName=None, w_len=2048, w_step=205, f0_min=100, f0_max=500, harmo_thresh=0.1):
     """
 
     Compute the Yin Algorithm. Return fundamental frequency and harmonic rate.
@@ -248,7 +248,7 @@ def main(audioFileName="../audio/Cello_Suite_1007_mono.wav", w_len=1024, w_step=
 #--------------------------------------------------------------------
     import csv
     MED_output = medfilt(argmins,29)
-    with open("../doc/YIN_result_nofilt.csv","w",encoding = "UTF-8") as f1:
+    with open("../doc/YIN_result.csv","w",encoding = "UTF-8") as f1:
         writer = csv.writer(f1, lineterminator='\n')
         for i in range(len(times)):
             writer.writerow([times[i],MED_output[i]])
