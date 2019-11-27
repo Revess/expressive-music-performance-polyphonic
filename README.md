@@ -1,7 +1,7 @@
 # expressive-music-performance-monophonic
 
-##make_input.py   make the input files(spectrogram and midi.csv file) for NN.
-                it needs monoral wav file and corresponding midi file
-NN.py           Multi Layer Preceptron NN model.
-                it needs input file
-cal.py          calculate the accuracy of some result
+make_input.py : Make the input files(spectrogram and midi.csv file) for NN. It needs monoral wav file and corresponding midi file.
+
+NN.py : Multi Layer Preceptron NN model. It needs input file.
+
+cal.py : calculate the accuracy of some result
