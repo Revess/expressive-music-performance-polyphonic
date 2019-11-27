@@ -6,9 +6,9 @@ import NN as nn
 
 # print("===========Generating_MIDI===========")
 # gf.generate_files(GenerateMidi=True)
-print("===========Generating_Inputs===========")
-gf.generate_files(GenerateLabels=True,GenerateSpec=True,WriteFile=True,window=22050,overlapping=0.001953125*2)
+# print("===========Generating_Inputs===========")
+# gf.generate_files(GenerateLabels=True,GenerateSpec=True,WriteFile=True,window=11025,overlapping=0.001953125*32)
 print("===========Training===========")
-nn.NN(hiddenlayers=[11000/2,11000/2,11000/4])
+nn.NN(hiddenlayers=[1636/2,1636/2])
 print("===========Generating_Output===========")
 gf.generate_files(GenerateOutput=True)

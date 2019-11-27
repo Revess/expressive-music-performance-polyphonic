@@ -69,7 +69,7 @@ def generate_files(GenerateMidi = False, GenerateSpec = False, GenerateLabels = 
 
     if(output and not labels and not spectral):
         print("~~~~Labels to MIDI~~~~")
-        otm.output_to_midi(PREDICTION_MIDI,PREDICTION_LABELS,DynTW=True)
+        otm.output_to_midi(PREDICTION_MIDI,PREDICTION_LABELS,DynTW=False)
 
     if(passthrough):
         otm.output_to_midi(PREDICTION_MIDI,REFERENCE_LABELS)

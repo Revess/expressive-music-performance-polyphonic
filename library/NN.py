@@ -26,12 +26,13 @@ def NN(WriteFile=True,hiddenlayers=[100,100,100,100]):
     x_ref = x_ref.drop(["time in seconds"],1)
     x_comperison = x_comperison.drop(["time in seconds"],1)
     y_comperison = y_comperison.drop(["time in seconds"],1)
-    model = mlp(hidden_layer_sizes=(int(hiddenlayers[0]),int(hiddenlayers[1]),int(hiddenlayers[2])),verbose=True,max_iter=5000)
+    model = mlp(hidden_layer_sizes=(int(hiddenlayers[0]),int(hiddenlayers[1])),verbose=True,max_iter=5000)
     model.fit(x_ref,y_ref)
     elapsed = t.time() - start
     print("Done training: " + "{0:.2f}".format(elapsed) + "s")
     y_pred = model.predict(x_predict)
     print("Training set score: %f" % model.score(x_ref, y_ref))
+    #print("Cassification score: %f" % classification_report(y_ref,y_pred))
     print("Test set score: %f" % model.score(x_comperison, y_comperison))
 
     if(WriteFile):
