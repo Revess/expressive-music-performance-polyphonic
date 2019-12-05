@@ -34,7 +34,7 @@ def generate_files(GenerateMidi = False, GenerateSpec = False, GenerateLabels = 
     #Translations for Predictions data
     PREDICTION_LABELS = os.path.join('.','Data','Output','prediction.csv')
     PREDICTION_SPEC = os.path.join('.','Data','Csv','predspec.csv')
-    PREDICTION_AUDIO = os.path.join('.','Data','Audio','S01-BT.wav')
+    PREDICTION_AUDIO = os.path.join('.','Data','Audio','S02-AT.wav')
     PREDICTION_MIDI = os.path.join('.','Data','Output','predmidi.mid')
 
 
@@ -66,10 +66,13 @@ def generate_files(GenerateMidi = False, GenerateSpec = False, GenerateLabels = 
         print("Transforming: " + str(COMPARISON_LABELS))
         sotc.find_and_write_labels(COMPARISON_SPEC,COMPARISON_MIDI,COMPARISON_LABELS)
         print("\n")
+        # print("Transforming: " + str(SCORELABELS_PATH))
+        # sotc.find_and_write_labels(REFERENCE_SPEC,MIDI_SCORE,SCORELABELS_PATH)
+        # print("\n")
 
     if(output and not labels and not spectral):
         print("~~~~Labels to MIDI~~~~")
-        otm.output_to_midi(PREDICTION_MIDI,PREDICTION_LABELS,DynTW=False)
+        otm.output_to_midi(PREDICTION_MIDI,PREDICTION_LABELS,DynTW=True)
 
     if(passthrough):
         otm.output_to_midi(PREDICTION_MIDI,REFERENCE_LABELS)

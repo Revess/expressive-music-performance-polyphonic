@@ -4,8 +4,7 @@ import csv
 import pandas as pd
 from sklearn.neural_network import MLPClassifier as mlp
 from sklearn.model_selection import train_test_split,GridSearchCV
-from sklearn.metrics import accuracy_score,classification_report
-from sklearn.utils.validation import column_or_1d
+from sklearn.metrics import accuracy_score,classification_report,f1_score
 import time as t
 
 def NN(WriteFile=True,hiddenlayers=[100,100,100,100]):
@@ -32,8 +31,11 @@ def NN(WriteFile=True,hiddenlayers=[100,100,100,100]):
     print("Done training: " + "{0:.2f}".format(elapsed) + "s")
     y_pred = model.predict(x_predict)
     print("Training set score: %f" % model.score(x_ref, y_ref))
-    #print("Cassification score: %f" % classification_report(y_ref,y_pred))
-    print("Test set score: %f" % model.score(x_comperison, y_comperison))
+    print("Comparison set score: %f" % model.score(x_comperison, y_comperison))
+    print("f1 weighted prediction set score: %f" % f1_score(y_comperison, y_pred, average='weighted'))
+    print("f1 macro prediction set score: %f" % f1_score(y_comperison, y_pred, average='macro'))
+    print("f1 micro prediction set score: %f" % f1_score(y_comperison, y_pred, average='micro'))
+
 
     if(WriteFile):
         header = "time in seconds"
