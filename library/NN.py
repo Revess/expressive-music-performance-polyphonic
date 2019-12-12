@@ -2,10 +2,10 @@ import numpy as np
 import os
 import csv
 import pandas as pd
-from sklearn.neural_network import MLPClassifier as mlp
-from sklearn.model_selection import train_test_split,GridSearchCV
-from sklearn.metrics import accuracy_score,classification_report,f1_score
 import time as t
+from keras.preprocessing import sequence
+from keras.models import Sequential
+from keras.layers import Embedding, SimpleRNN, Dense
 
 def NN(WriteFile=True,hiddenlayers=[100,100,100,100]):
     print("Reading data")
@@ -17,25 +17,29 @@ def NN(WriteFile=True,hiddenlayers=[100,100,100,100]):
     y_comperison = pd.read_csv(os.path.join('.','Data','Csv','complabels.csv'))
     elapsed = t.time() - start
     print("Done reading data: " + "{0:.2f}".format(elapsed) + "s")
+    print("Preparing data")
+    timeslices = x_predict["time in seconds"]
+    x_ref = x_ref.values
+    y_ref = y_ref.values
+    x_predict = x_predict.values
+    x_comperison = x_comperison.values
+    y_comperison = y_comperison.values
+    x_ref = x_ref.reshape(1,int(x_ref.shape[0]),int(x_ref.shape[1]))
+    print(x_ref.shape,y_ref.shape)
+
     print("Training")
     start = t.time()
-    timeslices = x_predict["time in seconds"]
-    y_ref = y_ref.drop(["time in seconds"],1)
-    x_predict = x_predict.drop(["time in seconds"],1)
-    x_ref = x_ref.drop(["time in seconds"],1)
-    x_comperison = x_comperison.drop(["time in seconds"],1)
-    y_comperison = y_comperison.drop(["time in seconds"],1)
-    model = mlp(hidden_layer_sizes=(int(hiddenlayers[0]),int(hiddenlayers[1])),verbose=True,max_iter=5000)
-    model.fit(x_ref,y_ref)
+    model = Sequential()
+    model.add(SimpleRNN(128, input_shape=(int(x_ref.shape[1]),int(x_ref.shape[2]))))
+    model.add(Dense(int(y_ref.shape[1]),activation='sigmoid'))
+    model.compile(loss='binary_crossentropy', optimizer='adam',metrics=['accuracy'])
+    model.summary()
+    model.fit(x_ref,y_ref,validation_data=(x_comperison, y_comperison),batch_size=2,epochs=5)
+    y_pred = model.predict(x_predict)
+    print(y_pred)
+
     elapsed = t.time() - start
     print("Done training: " + "{0:.2f}".format(elapsed) + "s")
-    y_pred = model.predict(x_predict)
-    print("Training set score: %f" % model.score(x_ref, y_ref))
-    print("Comparison set score: %f" % model.score(x_comperison, y_comperison))
-    print("f1 weighted prediction set score: %f" % f1_score(y_comperison, y_pred, average='weighted'))
-    print("f1 macro prediction set score: %f" % f1_score(y_comperison, y_pred, average='macro'))
-    print("f1 micro prediction set score: %f" % f1_score(y_comperison, y_pred, average='micro'))
-
 
     if(WriteFile):
         header = "time in seconds"

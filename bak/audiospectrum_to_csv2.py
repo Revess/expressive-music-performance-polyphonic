@@ -59,13 +59,45 @@ def audio_to_spectroCSV(audio_path,csv_path,nfft,overlap,remove_silence,Show_Gra
         #Write to csv file
         print("Start writing csv file")
         start = t.time()
-        header = "time in seconds"
-        for data in frequency:
-            header += "," + str(data)
-        header += "\n"
         spectrum = np.rot90(spectrum)
         spectrum = np.flip(spectrum,0)
+        tempspec = np.zeros((spectrum.shape[0],spectrum.shape[1]*3))
+        for timeindex in range(int(tempspec.shape[0])):
+            for freqindex in range(int(tempspec.shape[1])):
+                modfreq = int(freqindex/3)
+                modindex = freqindex % 3
+                if(timeindex == 0):
+                    if(modindex == 0):
+                        tempspec[timeindex,freqindex] = 0
+                    elif(modindex == 1):
+                        tempspec[timeindex,freqindex] = spectrum[timeindex,modfreq]
+                    elif(modindex == 2):
+                        tempspec[timeindex,freqindex] = spectrum[timeindex+1,modfreq]
+                elif(timeindex >= int(tempspec.shape[0])-1):
+                    if(modindex == 0):
+                        tempspec[timeindex,freqindex] = spectrum[timeindex-1,modfreq]
+                    elif(modindex == 1):
+                        tempspec[timeindex,freqindex] = spectrum[timeindex,modfreq]
+                    elif(modindex == 2):
+                        tempspec[timeindex,freqindex] = 0
+                elif(timeindex != 0):
+                    if(modindex == 0):
+                        tempspec[timeindex,freqindex] = spectrum[timeindex-1,modfreq]
+                    elif(modindex == 1):
+                        tempspec[timeindex,freqindex] = spectrum[timeindex,modfreq]
+                    elif(modindex == 2):
+                        tempspec[timeindex,freqindex] = spectrum[timeindex+1,modfreq]
+
+        spectrum = tempspec
         spectrum = np.insert(spectrum,0,times,1)
+        header = "time in seconds"
+        for freqindex in range(int(spectrum.shape[1])-1):
+            mod = freqindex % 3
+            if(mod == 0):
+                header += "," + str(frequency[round(freqindex/3)])
+            else:
+                header += "," + " "
+        header += "\n"
 
         with open(csv_path, "w", newline='') as spectrum_csv:
             spectrum_csv.write(header)
