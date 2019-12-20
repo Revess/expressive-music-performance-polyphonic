@@ -100,10 +100,13 @@ def output_to_midi(OUTPUT_PATH,PRED_MIDI_PATH,DynTW=True):
         for j in range(int(mididata.shape[0])):
             if(mididata.iloc[j,2] != 0 and mididata.iloc[j,3] != 0):
                 time = ((mididata.iloc[j,2] * 1000)/60000) * tempo
-                duration = (((mididata.iloc[j,3] - mididata.iloc[j,2])* 1000)/60000) * tempo
+                duration = abs((((mididata.iloc[j,3] - mididata.iloc[j,2])* 1000)/60000) * tempo)
                 pitch = mididata.iloc[j,0]
                 numnotes+=1
                 mf.addNote(track, channel, pitch, time, duration, volume)
+                if(duration < 0 or time < 0):
+                    print(duration,time)
+                    print(mididata.iloc[j,2],mididata.iloc[j,3])
                 mididata.iloc[j,2] = 0
                 mididata.iloc[j,3] = 0
     print("number of generated notes: " + str(numnotes))
