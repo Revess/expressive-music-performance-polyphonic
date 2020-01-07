@@ -20,18 +20,18 @@ def NN(WriteFile=True,numNodes=256):
     elapsed = t.time() - start
     print("Done reading data: " + "{0:.2f}".format(elapsed) + "s")
     print("Preparing data")
-    timeslices = x_predict.loc[2900:3000,"time in seconds"]
+    timeslices = x_predict.loc[2500:3000,"time in seconds"]
 
     x_ref = x_ref.drop(["time in seconds"],1)
     y_ref = y_ref.drop(["time in seconds"],1)
     x_comperison = x_comperison.drop(["time in seconds"],1)
     y_comperison = y_comperison.drop(["time in seconds"],1)
     x_predict = x_predict.drop(["time in seconds"],1)
-    x_ref = x_ref[2900:3000].values
-    y_ref = y_ref[2900:3000].values
-    x_predict = x_predict[2900:3000].values
-    x_comperison = x_comperison[2900:3000].values
-    y_comperison = y_comperison[2900:3000].values
+    x_ref = x_ref[2500:3000].values
+    y_ref = y_ref[2500:3000].values
+    x_predict = x_predict[2500:3000].values
+    x_comperison = x_comperison[2500:3000].values
+    y_comperison = y_comperison[2500:3000].values
     x_ref = x_ref.reshape(int(x_ref.shape[0]),int(x_ref.shape[1]),1)
     x_comperison = x_comperison.reshape(int(x_comperison.shape[0]),int(x_comperison.shape[1]),1)
     x_predict = x_predict.reshape(int(x_predict.shape[0]),int(x_predict.shape[1]),1)
@@ -72,4 +72,3 @@ def NN(WriteFile=True,numNodes=256):
             wr = csv.writer(result_csv, quoting=csv.QUOTE_NONE)
             wr.writerows(y_pred)
             result_csv.close()
-        
