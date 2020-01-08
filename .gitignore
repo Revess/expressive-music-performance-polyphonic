@@ -1,2 +1,6 @@
 *.csv
 *.md
+/Data
+/__pycache__
+/library/__pycache__
+/.vscode
