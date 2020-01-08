@@ -2,5 +2,6 @@
 *.md
 *.mid
 /.vscode
+/Data
 /__pycache__
 /library/__pycache__
