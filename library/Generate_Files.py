@@ -4,14 +4,13 @@ import convert_midi_to_csv as cmc
 import slice_onsets_to_csv as sotc
 import output_to_midi as otm
 
-def generate_files(GenerateOutput=False,GenerateInput=False,window=8192,overlapping=0.0175):
+def generate_files(GenerateOutput=False,GenerateInput=False,window=4056*2,overlapping=0.125/2):
     #Paths
     MIDI_CSV = os.path.join('.','Data','Csv','Scores')
     MIDI_PATH = os.path.join('.','Data','Midi','Original')
     MIDI_EDIT1 = os.path.join('.','Data','Csv','Scores','EditedSCore1CT.csv')
     LABELS_PATH = os.path.join('.','Data','Csv','Labels')
     SPECTRUM_PATH = os.path.join('.','Data','Csv','Spectrum')
-    SPECTRUM_DIR = os.listdir(SPECTRUM_PATH)
     AUDIO_PATH = os.path.join('.','Data','Audio')
     AUDIO_DIR = os.listdir(AUDIO_PATH)
     PREDICTIONS_PATH = os.path.join('.','Data','Csv','Predictions')
@@ -32,6 +31,7 @@ def generate_files(GenerateOutput=False,GenerateInput=False,window=8192,overlapp
                 print("Transforming: " + str(fileName))
                 asc.audio_to_spectroCSV(AUDIO_FILE_PATH,SPECTRUM_FILE_PATH,window,overlapping)
                 print("\n")
+        SPECTRUM_DIR = os.listdir(SPECTRUM_PATH)
         print("~~~~Labels to CSV~~~~")
         for fileName in SPECTRUM_DIR:
             if fileName[-3:] == 'csv':
@@ -46,6 +46,8 @@ def generate_files(GenerateOutput=False,GenerateInput=False,window=8192,overlapp
         print("~~~~Labels to MIDI~~~~")
         for fileName in PREDICTIONS_DIR:
             if fileName[-3:] == 'csv':
+                print("Writing to file: " + str(fileName))
                 OUTPUT_FILE_PATH = os.path.join(OUTPUT_PATH, fileName[:-3]+"mid")
                 PREDICTION_FILE_PATH = os.path.join(PREDICTIONS_PATH, fileName)
-                otm.output_to_midi(OUTPUT_FILE_PATH,PREDICTION_FILE_PATH,DynTW=True)
+                otm.output_to_midi(OUTPUT_FILE_PATH,PREDICTION_FILE_PATH,DynTW=False)
+                print("\n")

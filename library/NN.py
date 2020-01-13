@@ -12,8 +12,9 @@ def NN(hiddenlayers=[100,100,100,100]):
     start = t.time()
     x_ref = pd.read_csv(os.path.join('.','Data','Csv','Spectrum','S01-AT.csv'))
     y_ref = pd.read_csv(os.path.join('.','Data','Csv','Labels','S01-AT.csv'))
+    SPECTRUM_PATH = os.path.join('.','Data','Csv','Spectrum')
     PREDICTIONS_PATH = os.path.join('.','Data','Csv','Predictions')
-    PREDICTIONS_DIR = os.listdir(PREDICTIONS_PATH)
+    SPECTRUM_DIR = os.listdir(SPECTRUM_PATH)
     elapsed = t.time() - start
     print("Done reading data: " + "{0:.2f}".format(elapsed) + "s")
     print("Training")
@@ -25,9 +26,12 @@ def NN(hiddenlayers=[100,100,100,100]):
     elapsed = t.time() - start
     print("Done training: " + "{0:.2f}".format(elapsed) + "s")
     ("Predicting Files")
-    for fileName in PREDICTIONS_DIR:
-        if fileName[-3:] == 'csv': 
-            x_predict = pd.read_csv(os.path.join(PREDICTIONS_PATH, fileName))
+    for fileName in SPECTRUM_DIR:
+        if fileName[-3:] == 'csv':
+            print("Predicting file: " + str(fileName)) 
+            PREDICTIONS_FILE_PATH = os.path.join(PREDICTIONS_PATH, fileName)
+            SPECTRUM_FILE_PATH = os.path.join(SPECTRUM_PATH, fileName)
+            x_predict = pd.read_csv(SPECTRUM_FILE_PATH)
             timeslices = x_predict["time in seconds"]
             x_predict = x_predict.drop(["time in seconds"],1)
             y_pred = model.predict(x_predict)
@@ -39,7 +43,7 @@ def NN(hiddenlayers=[100,100,100,100]):
             timeslices = timeslices.to_numpy()
             y_pred = y_pred.astype(object)
             y_pred = np.insert(y_pred,0,timeslices,axis=1)
-            with open(os.path.join("Data","Output","prediction.csv"), "w", newline='') as result_csv:
+            with open(PREDICTIONS_FILE_PATH, "w", newline='') as result_csv:
                 result_csv.write(header)
                 wr = csv.writer(result_csv, quoting=csv.QUOTE_NONE)
                 wr.writerows(y_pred)
