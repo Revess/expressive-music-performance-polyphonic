@@ -16,7 +16,7 @@ import frame_timer as ft
 start = 0
 elapsed = 0
 
-def audio_to_spectroCSV(audio_path,csv_path,nfft,overlap,remove_silence,Show_Graph,Write_File):
+def audio_to_spectroCSV(audio_path,csv_path,nfft,overlap,remove_silence=False,Show_Graph=False,Write_File=True):
     data, sr = lb.core.load(audio_path)
     data = lb.util.normalize(data)
     #If needed you can remove the starting silence of the audio file
