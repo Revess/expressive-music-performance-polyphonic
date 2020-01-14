@@ -9,4 +9,4 @@ import NN as nn
 print("===========Training===========")
 nn.NN()
 print("===========Generating_Output===========")
-gf.generate_files(GenerateOutput=True)
+# gf.generate_files(GenerateOutput=True)

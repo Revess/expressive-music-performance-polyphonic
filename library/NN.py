@@ -6,10 +6,10 @@ import time as t
 from keras.preprocessing import sequence
 from keras.models import Sequential
 from keras.callbacks import ModelCheckpoint, EarlyStopping
-from keras.layers import Embedding, SimpleRNN, Dense, Flatten,Dropout
+from keras.layers import Embedding, SimpleRNN, Dense, Flatten, Dropout, LSTM, RepeatVector
 from matplotlib import pyplot
 
-def NN(WriteFile=True):
+def NN(WriteFile=False):
     print("Reading data")
     start = t.time()
     x_ref = pd.read_csv(os.path.join('.','Data','Csv','Spectrum','S01-CT.csv'))
@@ -32,20 +32,21 @@ def NN(WriteFile=True):
     x_predict = x_predict.values
     x_comperison = x_comperison.values
     y_comperison = y_comperison.values
-    x_ref = x_ref.reshape(int(x_ref.shape[0]),int(x_ref.shape[1]),1)
-    x_comperison = x_comperison.reshape(int(x_comperison.shape[0]),int(x_comperison.shape[1]),1)
-    x_predict = x_predict.reshape(int(x_predict.shape[0]),int(x_predict.shape[1]),1)
+    # x_ref = x_ref.reshape(int(x_ref.shape[0]),int(x_ref.shape[1]),1)
+    # x_comperison = x_comperison.reshape(int(x_comperison.shape[0]),int(x_comperison.shape[1]),1)
+    # x_predict = x_predict.reshape(int(x_predict.shape[0]),int(x_predict.shape[1]),1)
     print(x_ref.shape,y_ref.shape)
 
     print("Training")
-    # cb_list = [EarlyStopping(monitor='val_loss',min_delta=0.0000001 , patience=2, verbose=1)]
+    cb_list = [EarlyStopping(monitor='val_loss',min_delta=0.0000001 , patience=2, verbose=1)]
     model = Sequential()
-    model.add(SimpleRNN(1024, return_sequences=False, input_shape=(x_ref.shape[1],x_ref.shape[2])))
+    model.add(Dense(64,activation='relu',input_shape=(x_ref.shape[1],)))
+    model.add(RepeatVector(512))
+    model.add(SimpleRNN(128, return_sequences=False))
     model.add(Dense(128,activation='sigmoid'))
-    model.add(Dense(128,activation='softmax'))
     model.compile(loss='categorical_crossentropy', optimizer='adam',metrics=['accuracy'])
     model.summary()
-    history = model.fit(x_ref,y_ref,validation_data=(x_comperison,y_comperison), epochs=1000)
+    history = model.fit(x_ref,y_ref,validation_split=0.2, epochs=500)#validation_data=(x_comperison,y_comperison)
     pyplot.plot(history.history['loss'])
     pyplot.plot(history.history['val_loss'])
     pyplot.title('model train vs validation loss')
@@ -64,6 +65,8 @@ def NN(WriteFile=True):
     y_pred[y_pred <= 0.5] = 0
     y_pred[y_pred > 0.5] = 1
     y_pred = y_pred.astype(int)
+    print(y_pred.shape)
+    print(y_pred[y_pred==1].shape)
     print("Done training")
 
     if(WriteFile):
@@ -73,7 +76,6 @@ def NN(WriteFile=True):
         header += "\n"
         timeslices = timeslices.to_numpy()
         y_pred = y_pred.astype(object)
-        print(timeslices.shape)
         y_pred = np.insert(y_pred,0,timeslices,axis=1)
         with open(os.path.join("Data","Csv",'Predictions',"prediction.csv"), "w", newline='') as result_csv:
             result_csv.write(header)
