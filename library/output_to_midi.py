@@ -6,7 +6,7 @@ import os
 from matplotlib import pyplot as plt
 from dtw import dtw,warp
 
-MIDISCORE_PATH = os.path.join("Data","Csv","ScoreMidi.csv")
+MIDISCORE_PATH = os.path.join("Data","Csv","Scores","ScoreMidi.csv")
 
 def labels_to_notes(labels):
     y_labels = np.array([],dtype=int)

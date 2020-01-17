@@ -48,4 +48,4 @@ def generate_files(GenerateOutput=False,GenerateInput=False,window=4056,overlapp
             if fileName[-3:] == 'csv':
                 OUTPUT_FILE_PATH = os.path.join(OUTPUT_PATH, fileName[:-3]+"mid")
                 PREDICTION_FILE_PATH = os.path.join(PREDICTIONS_PATH, fileName)
-                otm.output_to_midi(OUTPUT_FILE_PATH,PREDICTION_FILE_PATH,DynTW=True)
+                otm.output_to_midi(OUTPUT_FILE_PATH,PREDICTION_FILE_PATH,DynTW=False)

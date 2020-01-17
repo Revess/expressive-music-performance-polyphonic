@@ -5,8 +5,8 @@ import Generate_Files as gf
 import NN as nn
 
 # print("===========Generating_Inputs===========")
-# gf.generate_files(GenerateInput=True,window=2048,overlapping=0.25)
+# gf.generate_files(GenerateInput=True,window=4096,overlapping=0.25/4)
 print("===========Training===========")
 nn.NN()
 print("===========Generating_Output===========")
-# gf.generate_files(GenerateOutput=True)
+gf.generate_files(GenerateOutput=True)

@@ -6,15 +6,15 @@ import time as t
 from keras.preprocessing import sequence
 from keras.models import Sequential
 from keras.callbacks import ModelCheckpoint, EarlyStopping
-from keras.layers import Embedding, SimpleRNN, Dense, Flatten, Dropout, LSTM, RepeatVector
+from keras.layers import Embedding, SimpleRNN, Dense, Flatten, Dropout, LSTM, RepeatVector, Dropout, GRU
 from matplotlib import pyplot
 
-def NN(WriteFile=False):
+def NN(WriteFile=True):
     print("Reading data")
     start = t.time()
     x_ref = pd.read_csv(os.path.join('.','Data','Csv','Spectrum','S01-CT.csv'))
     y_ref = pd.read_csv(os.path.join('.','Data','Csv','Labels','S01-CT.csv'))
-    x_predict = pd.read_csv(os.path.join('.','Data','Csv','Spectrum','S02-CT.csv'))
+    x_predict = pd.read_csv(os.path.join('.','Data','Csv','Spectrum','S02-AT.csv'))
     x_comperison = pd.read_csv(os.path.join('.','Data','Csv','Spectrum','S02-AT.csv'))
     y_comperison = pd.read_csv(os.path.join('.','Data','Csv','Labels','S02-AT.csv'))
     elapsed = t.time() - start
@@ -38,15 +38,18 @@ def NN(WriteFile=False):
     print(x_ref.shape,y_ref.shape)
 
     print("Training")
-    cb_list = [EarlyStopping(monitor='val_loss',min_delta=0.0000001 , patience=2, verbose=1)]
+    cb_list = [EarlyStopping(monitor='val_loss', min_delta=0.0001, patience=4, verbose=1)]
     model = Sequential()
-    model.add(Dense(64,activation='relu',input_shape=(x_ref.shape[1],)))
-    model.add(RepeatVector(512))
-    model.add(SimpleRNN(128, return_sequences=False))
-    model.add(Dense(128,activation='sigmoid'))
-    model.compile(loss='categorical_crossentropy', optimizer='adam',metrics=['accuracy'])
+    model.add(Dense(128,activation='relu',input_shape=(x_ref.shape[1],)))
+    # model.add(Dropout(0.4))
+    model.add(RepeatVector(3))
+    model.add(Dropout(0.4))
+    model.add(GRU(256, return_sequences=False))
+    model.add(Dropout(0.4))
+    model.add(Dense(128,activation='relu'))
+    model.compile(loss='binary_crossentropy', optimizer='sgd', metrics=['accuracy'])
     model.summary()
-    history = model.fit(x_ref,y_ref,validation_split=0.2, epochs=500)#validation_data=(x_comperison,y_comperison)
+    history = model.fit(x_ref,y_ref,validation_data=(x_comperison,y_comperison), batch_size=64, epochs=20, callbacks=cb_list)#validation_data=(x_comperison,y_comperison)
     pyplot.plot(history.history['loss'])
     pyplot.plot(history.history['val_loss'])
     pyplot.title('model train vs validation loss')
